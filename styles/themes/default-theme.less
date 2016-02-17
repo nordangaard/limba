@@ -1,0 +1,54 @@
+.default-theme {
+  &.app-container {
+    background-color: @df-main-color;
+    color: #222;
+
+    .main-panel {
+      color: #FFF;
+    }
+
+    .word-panel {
+      color: #FFF;
+    }
+
+    .logo {
+      background-color: @df-logo-color;
+      color: @df-main-color;
+
+      &:hover {
+        background-color: @df-logo-hover-color;
+      }
+    }
+
+    .module {
+      background-color: white;
+      box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.5);
+
+      .header {
+        border-bottom: solid 1px #DDD;
+      }
+    }
+
+    .menu {
+      li:hover {
+        background-color: #EEE;
+        box-shadow: inset 1px 1px 4px 0 #DDD;
+      }
+
+      &.tabs {
+        li.active {
+          background-color: #EEE;
+          box-shadow: inset 1px 1px 4px 0 #DDD;
+        }
+      }
+    }
+
+    a {
+      text-decoration: none;
+      color: #FFF;
+    }
+
+
+    font-family: 'Roboto', sans-serif;
+  }
+}
