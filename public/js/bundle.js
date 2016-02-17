@@ -47,12 +47,19 @@
 	'use strict';
 
 	var riot = __webpack_require__(1);
-	var jquery = __webpack_require__(4);
-	__webpack_require__(3);
+	var jquery = __webpack_require__(3);
+	__webpack_require__(4);
+
+	riot.route.base('/');
+	riot.route('/', function () {
+	  console.log('I am root');
+	});
 
 	document.addEventListener('DOMContentLoaded', function () {
 	  riot.mount('module-tag', 'module-tag', { '$': jquery });
 	});
+
+	riot.route.start(true);
 
 /***/ },
 /* 1 */
@@ -2503,18 +2510,6 @@
 
 /***/ },
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var riot = __webpack_require__(1);
-
-	riot.tag2('module-tag', '<h1>Hej</h1>', '', 'class="module"', function(opts) {
-	    var elem = this.opts.$(this.root);
-
-	});
-
-
-/***/ },
-/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -12348,6 +12343,18 @@
 
 	return jQuery;
 	}));
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var riot = __webpack_require__(1);
+
+	riot.tag2('module-tag', '<h1>Hej</h1>', '', 'class="module"', function(opts) {
+	    var elem = this.opts.$(this.root);
+
+	});
 
 
 /***/ }

@@ -34,7 +34,7 @@ app.use(helmet.nosniff());
 app.set('view engine', 'jade');
 app.set('views', fixPath('templates'));
 
-app.get('/', function (req, res) {
+app.get('*', function (req, res) {
   res.render("index");
 });
 
