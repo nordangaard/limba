@@ -11,6 +11,10 @@
 // General rules
 //
 
+[riot-tag] {
+  display: block;
+}
+
 .logo-section {
   text-align: left;
 }
@@ -57,21 +61,20 @@ li {
   padding: 0;
 }
 
-.word-panel {
+.word {
 
+  display: inline-block;
   padding-top: 6vh;
 
-  h2 {
-    margin: 0 0 6vh 0;
-    text-align: center;
-    text-transform: capitalize;
-
+  .big {
     @media @mobile {
       font-size: 6vh;
     }
+
     @media @tablet {
       font-size: 10vw;
     }
+
     @media @desktop {
       font-size: 10vw;
     }
@@ -83,7 +86,39 @@ li {
     @media @desktop-xxl {
       font-size: 7vw;
     }
+  }
 
+  .big;
+
+  h2 {
+    //margin: 0 0 6vh 0;
+    margin: 0;
+    text-align: center;
+    text-transform: capitalize;
+
+  }
+
+  .info {
+    text-align: center;
+    font-size: 0.26em;
+    position: relative;
+
+    span {
+      cursor: pointer;
+      text-transform: capitalize;
+      &:first-child,
+      &:last-child {
+        position: absolute;
+      }
+
+      &:first-child {
+        left: 5px;
+      }
+
+      &:last-child {
+        right: 5px;
+      }
+    }
   }
 }
 

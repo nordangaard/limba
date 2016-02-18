@@ -48,10 +48,10 @@
 
 	var riot = __webpack_require__(1);
 	var jquery = __webpack_require__(3);
-	__webpack_require__(4);
+	__webpack_require__(7);
 
 	document.addEventListener('DOMContentLoaded', function () {
-	  riot.mount('module-tag', 'module-tag', { '$': jquery });
+	  riot.mount('word', 'word', { '$': jquery });
 	});
 
 /***/ },
@@ -12339,15 +12339,25 @@
 
 
 /***/ },
-/* 4 */
+/* 4 */,
+/* 5 */,
+/* 6 */,
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var riot = __webpack_require__(1);
 
-	riot.tag2('module-tag', '<h1>Hej</h1>', '', 'class="module"', function(opts) {
+	riot.tag2('word', '<h2>{this.data.word}</h2> <div class="info"> <span>{this.data.translation}</span> <span>{this.data.number}</span> <span>{this.data.gender}</span> </div>', '', 'class="word"', function(opts) {
 	    var elem = this.opts.$(this.root);
+	    this.data = {
+	      word: 'Masina',
+	      translation: 'Car',
+	      gender: 'feminine',
+	      number: 'singular'
+	    };
+	    console.log('Hej');
 
-	});
+	}, '{ }');
 
 
 /***/ }

@@ -4,11 +4,21 @@
     color: #222;
 
     .main-panel {
-      color: #FFF;
+      color: @df-text-color;
     }
 
-    .word-panel {
-      color: #FFF;
+    .word {
+      color: @df-text-color;
+
+      .info {
+        span {
+          color: transparent;
+
+          &:hover {
+            color: @df-text-color;
+          }
+        }
+      }
     }
 
     .logo {
@@ -45,7 +55,7 @@
 
     a {
       text-decoration: none;
-      color: #FFF;
+      color: @df-text-color;
     }
 
 

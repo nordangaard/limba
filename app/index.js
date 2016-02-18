@@ -1,10 +1,10 @@
 var riot = require('riot');
 var jquery = require('jquery');
-require('./tags/module-tag.tag');
+require('./tags/word.tag');
 
 
 document.addEventListener('DOMContentLoaded', function () {
-  riot.mount('module-tag', 'module-tag', { '$': jquery });
+  riot.mount('word', 'word', { '$': jquery });
 
 
 });
