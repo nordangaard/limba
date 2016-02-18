@@ -50,16 +50,9 @@
 	var jquery = __webpack_require__(3);
 	__webpack_require__(4);
 
-	riot.route.base('/');
-	riot.route('/', function () {
-	  console.log('I am root');
-	});
-
 	document.addEventListener('DOMContentLoaded', function () {
 	  riot.mount('module-tag', 'module-tag', { '$': jquery });
 	});
-
-	riot.route.start(true);
 
 /***/ },
 /* 1 */
