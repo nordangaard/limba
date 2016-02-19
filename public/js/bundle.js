@@ -48,51 +48,24 @@
 
 	var riot = __webpack_require__(1);
 	var jquery = __webpack_require__(3);
-	var redux = __webpack_require__(8);
+	var reducer = __webpack_require__(21);
 
 	__webpack_require__(7);
 
-	var initState = {
-	  words: [{
-	    word: 'Masina',
-	    translation: 'Car',
-	    gender: 'feminine',
-	    number: 'singular'
-	  }]
-	};
-
-	function counter() {
-	  var state = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
-	  var action = arguments[1];
-
-	  switch (action.type) {
-	    case 'INITIALIZE':
-	      return initState;
-	    case 'CHANGE_WORD':
-	      state.words[0].word = action.data.word;
-	      return state;
-	    case 'DECREMENT':
-	      return state - 1;
-	    default:
-	      return state;
-	  }
-	}
-
-	var store = redux.createStore(counter);
-	store.dispatch({ type: 'INITIALIZE' });
+	reducer.store.dispatch({ type: 'INITIALIZE' });
 
 	// You can subscribe to the updates manually, or use bindings to your view layer.
-	store.subscribe(function () {
-	  return console.log(store.getState());
+	reducer.store.subscribe(function () {
+	  return console.log(reducer.store.getState());
 	});
 
 	window.dis = function dis(word) {
-	  store.dispatch({ type: 'CHANGE_WORD', data: { word: word } });
+	  reducer.store.dispatch({ type: 'CHANGE_WORD', data: { word: word } });
 	};
 
 	document.addEventListener('DOMContentLoaded', function () {
-	  riot.mount('word', 'word', { '$': jquery, data: store.getState().words[0] });
-	  store.subscribe(function () {
+	  riot.mount('word', 'word', { '$': jquery, data: reducer.store.getState().words[0] });
+	  reducer.store.subscribe(function () {
 	    return riot.update();
 	  });
 	});
@@ -13215,6 +13188,62 @@
 	    }, last.apply(undefined, arguments));
 	  };
 	}
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Controller = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./controller\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var initState = __webpack_require__(22);
+
+	var GameController = new Controller();
+
+	module.exports = GameController;
+
+/***/ },
+/* 20 */,
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var redux = __webpack_require__(8);
+	var GameCtrl = __webpack_require__(19);
+
+	function counter() {
+	  var state = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
+	  var action = arguments[1];
+
+
+	  if (GameCtrl.belongs(action.type)) {
+	    return GameCtrl.reducer(state, action);
+	  }
+
+	  return state;
+	}
+
+	var store = redux.createStore(counter);
+
+	module.exports = {
+	  store: store
+	};
+
+/***/ },
+/* 22 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = {
+	  words: [{
+	    word: 'Masina',
+	    translation: 'Car',
+	    gender: 'feminine',
+	    number: 'singular'
+	  }]
+	};
 
 /***/ }
 /******/ ]);
