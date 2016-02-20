@@ -9,7 +9,6 @@
 
   <script>
     var elem = this.opts.$(this.root);
-    console.log('Hej');
     //elem.addClass('module');
   </script>
 </word>

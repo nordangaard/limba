@@ -1,13 +1,31 @@
+var _ = require('lodash');
+
 class Controller {
   constructor() {
+    this.methods = {};
   }
 
-  const ACCEPTED_ACTIONS = [
-    'INITIALIZE'
-  ]
+  belongs( name ) {
+    return ( this.methods.hasOwnProperty( name ) );
+  }
 
-  belongs( type ) {
-    return ( ACCEPTED_ACTIONS.indexOf( String(type) ) !== -1  )
+  add( name, func ) {
+
+    if( !_.isFunction(func) ) {
+      console.error('Argument not function.');
+      return;
+    }
+
+    if( this.belongs( name ) ) {
+      console.error('Cannot redefine function, ' + name + ' already exists.');
+      return;
+    }
+
+    this.methods[name] = func;
+  }
+
+  reducer( state, action ) {
+    return this.methods[action.type].apply(this, [state, action]);
   }
 }
 
