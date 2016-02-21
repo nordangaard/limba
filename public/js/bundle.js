@@ -51,6 +51,9 @@
 	var reducer = __webpack_require__(4);
 
 	__webpack_require__(22);
+	__webpack_require__(23);
+	__webpack_require__(24);
+	__webpack_require__(25);
 
 	reducer.store.dispatch({ type: 'INITIALIZE' });
 	reducer.store.dispatch({ type: 'START_GAME' });
@@ -61,12 +64,11 @@
 	});
 
 	window.dis = function dis(word) {
-	  reducer.store.dispatch({ type: 'CHANGE_WORD', data: { word: word } });
+	  reducer.store.dispatch({ type: 'START_GAME' });
 	};
 
 	document.addEventListener('DOMContentLoaded', function () {
-	  riot.mount('game-handler', 'game-handler', { store: reducer.store });
-	  riot.mount('*');
+	  riot.mount('*', { store: reducer.store });
 	});
 
 /***/ },
@@ -13205,79 +13207,110 @@
 
 	'use strict';
 
-	var Controller = __webpack_require__(17);
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+	var _ = __webpack_require__(17);
+	var ls = __webpack_require__(27);
+	var Controller = __webpack_require__(19);
 	var initState = __webpack_require__(20);
 	var gameModes = __webpack_require__(21);
 
 	var GameController = new Controller();
 
 	GameController.add('INITIALIZE', function (state, action) {
-	  state = initState;
-	  state.gameModes = gameModes;
+	  var savedState = ls('limba-gamestate');
+
+	  if (savedState) {
+	    console.log('savedState');
+	    state = JSON.parse(savedState);
+	  } else {
+	    //state = initState;
+	    //state.gameModes = gameModes;
+	  }
+
 	  return state;
 	});
 
 	GameController.add('START_GAME', function (state, action) {
-	  console.log('hej');
+
+	  var mode = filterAndPick(state.gameModes, { 'active': true });
+	  if (mode) {
+	    var _ret = function () {
+	      var activeWords = _.filter(state.words, { 'active': true });
+	      var words = [];
+
+	      _.forEach(mode.picks, function (val) {
+	        var pick = filterAndPick(activeWords, val);
+	        if (pick) {
+	          pick.id = words.length + 1;
+	          words.push(pick);
+	        }
+	      });
+
+	      if (words.length > 0) {
+
+	        state.game = Object.assign({}, state.game, {
+	          words: words,
+	          mode: mode
+	        });
+
+	        saveGameState(state);
+	        return {
+	          v: state
+	        };
+	      }
+	    }();
+
+	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	  }
+
+	  state.game = {
+	    error: 'No words.'
+	  };
 	  return state;
 	});
+
+	GameController.add('SET_ANSWER', function (state, action) {
+	  var idx = action.id;
+	  state.game.mode.comparators[idx] = Object.assign({}, state.game.mode.comparators[idx], { answer: action.answer });
+
+	  return state;
+	});
+
+	GameController.add('CHECK_ANSWER', function (state, action) {
+	  console.log('Checking Answer', action);
+	  state.game.mode.comparators.forEach(function (val) {
+	    console.log(val);
+	    var id = val.wordId || 1;
+
+	    if (val.active && val.answer.length) {
+	      val.correct = checkAnswer(_.find(state.game.words, { id: id }), val.answer, val.selector);
+	    } else {
+	      val.correct = null;
+	    }
+	  });
+	  return state;
+	});
+
+	function filterAndPick(arr, filter) {
+	  var filtered = _.filter(arr, filter);
+	  var item = _.sample(filtered);
+	  return item;
+	}
+
+	function checkAnswer(word, answer, selector) {
+	  console.log(word, answer, _.get(word, selector) === answer);
+	  return _.get(word, selector) === answer;
+	}
+
+	function saveGameState(state) {
+	  ls('limba-gamestate', JSON.stringify(state));
+	}
 
 	module.exports = GameController;
 
 /***/ },
 /* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var _ = __webpack_require__(18);
-
-	var Controller = function () {
-	  function Controller() {
-	    _classCallCheck(this, Controller);
-
-	    this.methods = {};
-	  }
-
-	  _createClass(Controller, [{
-	    key: 'belongs',
-	    value: function belongs(name) {
-	      return this.methods.hasOwnProperty(name);
-	    }
-	  }, {
-	    key: 'add',
-	    value: function add(name, func) {
-
-	      if (!_.isFunction(func)) {
-	        console.error('Argument not function.');
-	        return;
-	      }
-
-	      if (this.belongs(name)) {
-	        console.error('Cannot redefine function, ' + name + ' already exists.');
-	        return;
-	      }
-
-	      this.methods[name] = func;
-	    }
-	  }, {
-	    key: 'reducer',
-	    value: function reducer(state, action) {
-	      return this.methods[action.type].apply(this, [state, action]);
-	    }
-	  }]);
-
-	  return Controller;
-	}();
-
-	module.exports = Controller;
-
-/***/ },
-/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
@@ -25632,10 +25665,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(19)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18)(module), (function() { return this; }())))
 
 /***/ },
-/* 19 */
+/* 18 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -25651,18 +25684,88 @@
 
 
 /***/ },
-/* 20 */
-/***/ function(module, exports) {
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var _ = __webpack_require__(17);
+
+	var Controller = function () {
+	  function Controller() {
+	    _classCallCheck(this, Controller);
+
+	    this.methods = {};
+	  }
+
+	  _createClass(Controller, [{
+	    key: 'belongs',
+	    value: function belongs(name) {
+	      return this.methods.hasOwnProperty(name);
+	    }
+	  }, {
+	    key: 'add',
+	    value: function add(name, func) {
+
+	      if (!_.isFunction(func)) {
+	        console.error('Argument not function.');
+	        return;
+	      }
+
+	      if (this.belongs(name)) {
+	        console.error('Cannot redefine function, ' + name + ' already exists.');
+	        return;
+	      }
+
+	      this.methods[name] = func;
+	    }
+	  }, {
+	    key: 'reducer',
+	    value: function reducer(state, action) {
+	      return this.methods[action.type].apply(this, [state, action]);
+	    }
+	  }]);
+
+	  return Controller;
+	}();
+
+	module.exports = Controller;
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var $ = __webpack_require__(3);
+	var words = [{
+	  type: 'noun',
+	  "word": "boală",
+	  "indefinite": {
+	    "word": "boală",
+	    "plural": "boli"
+	  },
+	  "definite": {
+	    "word": "boala",
+	    "plural": "bolile"
+	  },
+	  number: 'singular',
+	  "translation": "illness",
+	  "gender": "feminine",
+	  active: true
+	}];
+
+	$.get('/query/romanian/illness', function (res) {
+	  console.log(res);
+	  words.push(res);
+	});
+
 	module.exports = {
-	  words: [{
-	    word: 'Masina',
-	    translation: 'Car',
-	    gender: 'feminine',
-	    number: 'singular'
-	  }]
+	  words: words
 	};
 
 /***/ },
@@ -25671,9 +25774,77 @@
 
 	'use strict';
 
-	module.exports = {
-	  'nouns': 'hej'
-	};
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var modes = [];
+
+	var Mode = function () {
+	  function Mode(name, type) {
+	    _classCallCheck(this, Mode);
+
+	    this.name = name;
+	    this.type = type;
+	    this.active = true;
+	    this.comparators = [];
+	    this.picks = [];
+
+	    modes.push(this);
+
+	    return this;
+	  }
+
+	  _createClass(Mode, [{
+	    key: 'words',
+	    value: function words(type) {
+	      this.picks.push({ type: type });
+	      return this;
+	    }
+	  }, {
+	    key: 'comparator',
+	    value: function comparator(name, selector) {
+	      this.comparators.push({
+	        id: this.comparators.length,
+	        name: name,
+	        selector: selector,
+	        active: true,
+	        answer: '',
+	        correct: null
+	      });
+	      return this;
+	    }
+	  }]);
+
+	  return Mode;
+	}();
+
+	var nouns = new Mode('nouns', 'comparator');
+	nouns.words('noun').comparator('Articulation', 'definite.word').comparator('Plural', 'indefinite.plural').comparator('Plural articulation', 'definite.plural');
+
+	console.log(modes);
+
+	module.exports = modes;
+
+	// {
+	//   'nouns': {
+	//     type: 'comparator',
+	//     active: true,
+	//     picks: [
+	//       { type: 'noun' }
+	//     ],
+	//     comparators: [
+	//       {
+	//         id: 1,
+	//         name: 'Plural',
+	//         selector: 'indefinite.plural',
+	//         active: true,
+	//         answer: '',
+	//         correct: null
+	//       }
+	//     ]
+	//   }
+	// }
 
 /***/ },
 /* 22 */
@@ -25681,11 +25852,231 @@
 
 	var riot = __webpack_require__(1);
 
-	riot.tag2('word', '<h2>{this.opts.data.word}</h2> <div class="info"> <span>{this.opts.data.translation}</span> <span>{this.opts.data.number}</span> <span>{this.opts.data.gender}</span> </div>', '', 'class="word"', function(opts) {
-	    var elem = this.opts.$(this.root);
+	riot.tag2('game-handler', '<div if="{!this.state.game.error}"> <comparator-mode if="{this.mode(\'comparator\')}" game="{this.state.game}"> </comparator-mode> </div> <div class="error-message" if="{this.state.game.error}">{this.state.game.error}</div>', '', '', function(opts) {
+
+	    this.state = this.opts.store.getState();
+
+	    this.mode = function ( mode ) {
+	      return ( this.state.game.mode.type === mode )
+	    }
+
+	    this.checkAnswer = function () {
+	      this.opts.store.dispatch({type: 'CHECK_ANSWER'});
+	    }.bind(this);
+
+	    this.setAnswer = function ( id, answer ) {
+	      this.opts.store.dispatch({type: 'SET_ANSWER', id: id, answer: answer });
+	    }.bind(this);
+
+	    this.opts.store.subscribe(function () {
+	      this.state = this.opts.store.getState();
+	      this.update();
+	    }.bind(this));
+	}, '{ }');
+
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var riot = __webpack_require__(1);
+
+	var _ = __webpack_require__(17);
+	var $ = __webpack_require__(3);
+
+	riot.tag2('comparator-mode', '<word data="{this.word}"></word> <comparator each="{this.opts.game.mode.comparators}" data="{this}"></comparator> <div class="button-container"> <span class="main-button" onclick="{this.checkAnswer}">Skip</span> <span class="main-button" onclick="{this.checkAnswer}">Skip</span> </div>', '', '', function(opts) {
+	    this.on('update', function() {
+	      if(_.isArray(this.opts.game.words) && this.opts.game.words.length > 0)
+	        this.word = this.opts.game.words[0];
+
+	    });
+
+	    this.checkAnswer = function () {
+	      this.parent.checkAnswer();
+	    }
+
+	    this.setAnswer = function ( id, answer ) {
+	      this.parent.setAnswer( id, answer );
+	    }
 
 	}, '{ }');
 
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var riot = __webpack_require__(1);
+
+	riot.tag2('comparator', '<div> <input type="text" name="name" value="{this.answer}" autocomplete="off" placeholder="{this.name}" onchange="{this.setAnswer}"> <label if="{this.correct === true}">T</label> <label if="{this.correct === false}">F</label> </div>', '', 'class="comparator" if="{this.active}"', function(opts) {
+
+	    this.setAnswer = function(e) {
+	      this.answer = e.target.value;
+	      this.parent.setAnswer( this.id, this.answer );
+	    }
+
+	    this.on('update', function () {
+	    });
+	}, '{ }');
+
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var riot = __webpack_require__(1);
+
+	riot.tag2('word', '<h2>{this.opts.data.word}</h2> <div class="info"> <span>{this.opts.data.translation}</span> <span>{this.opts.data.number}</span> <span>{this.opts.data.gender}</span> </div>', '', 'class="word"', function(opts) {
+	}, '{ }');
+
+
+/***/ },
+/* 26 */,
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+
+	var stub = __webpack_require__(28);
+	var tracking = __webpack_require__(29);
+	var ls = 'localStorage' in global && global.localStorage ? global.localStorage : stub;
+
+	function accessor (key, value) {
+	  if (arguments.length === 1) {
+	    return get(key);
+	  }
+	  return set(key, value);
+	}
+
+	function get (key) {
+	  return JSON.parse(ls.getItem(key));
+	}
+
+	function set (key, value) {
+	  try {
+	    ls.setItem(key, JSON.stringify(value));
+	    return true;
+	  } catch (e) {
+	    return false;
+	  }
+	}
+
+	function remove (key) {
+	  return ls.removeItem(key);
+	}
+
+	function clear () {
+	  return ls.clear();
+	}
+
+	accessor.set = set;
+	accessor.get = get;
+	accessor.remove = remove;
+	accessor.clear = clear;
+	accessor.on = tracking.on;
+	accessor.off = tracking.off;
+
+	module.exports = accessor;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 28 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var ms = {};
+
+	function getItem (key) {
+	  return key in ms ? ms[key] : null;
+	}
+
+	function setItem (key, value) {
+	  ms[key] = value;
+	  return true;
+	}
+
+	function removeItem (key) {
+	  var found = key in ms;
+	  if (found) {
+	    return delete ms[key];
+	  }
+	  return false;
+	}
+
+	function clear () {
+	  ms = {};
+	  return true;
+	}
+
+	module.exports = {
+	  getItem: getItem,
+	  setItem: setItem,
+	  removeItem: removeItem,
+	  clear: clear
+	};
+
+
+/***/ },
+/* 29 */
+/***/ function(module, exports) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+
+	var listeners = {};
+	var listening = false;
+
+	function listen () {
+	  if (global.addEventListener) {
+	    global.addEventListener('storage', change, false);
+	  } else if (global.attachEvent) {
+	    global.attachEvent('onstorage', change);
+	  } else {
+	    global.onstorage = change;
+	  }
+	}
+
+	function change (e) {
+	  if (!e) {
+	    e = global.event;
+	  }
+	  var all = listeners[e.key];
+	  if (all) {
+	    all.forEach(fire);
+	  }
+
+	  function fire (listener) {
+	    listener(JSON.parse(e.newValue), JSON.parse(e.oldValue), e.url || e.uri);
+	  }
+	}
+
+	function on (key, fn) {
+	  if (listeners[key]) {
+	    listeners[key].push(fn);
+	  } else {
+	    listeners[key] = [fn];
+	  }
+	  if (listening === false) {
+	    listen();
+	  }
+	}
+
+	function off (key, fn) {
+	  var ns = listeners[key];
+	  if (ns.length > 1) {
+	    ns.splice(ns.indexOf(fn), 1);
+	  } else {
+	    listeners[key] = [];
+	  }
+	}
+
+	module.exports = {
+	  on: on,
+	  off: off
+	};
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ }
 /******/ ]);

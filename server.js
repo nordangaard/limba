@@ -7,6 +7,7 @@ var compress = require('compression');
 var semiStatic = require('semi-static');
 var serveStatic = require('serve-static');
 var app = express();
+var api = require('./api/words');
 
 var HTTP_PORT = 3000;
 
@@ -33,6 +34,9 @@ app.use(helmet.nosniff());
 
 app.set('view engine', 'jade');
 app.set('views', fixPath('templates'));
+
+app.get('/query/romanian/:query', api.queryRom);
+app.get('/query/english/:query', api.queryEng);
 
 app.get('*', function (req, res) {
   res.render("index");

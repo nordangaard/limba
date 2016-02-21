@@ -39,12 +39,38 @@
 }
 
 html,
-body {
+body,
+main,
+game-handler {
   height: 100%;
+}
+
+game-handler {
+  display: block;
 }
 
 main {
   text-align: center;
+  @media @mobile {
+    font-size: 6vh;
+  }
+
+  @media @tablet {
+    font-size: 10vw;
+  }
+
+  @media @desktop {
+    font-size: 10vw;
+  }
+
+  @media @desktop-xl {
+    font-size: 7vw;
+  }
+
+  @media @desktop-xxl {
+    font-size: 6vw;
+  }
+
 }
 
 .app-container {
@@ -70,29 +96,7 @@ li {
   display: inline-block;
   padding-top: 6vh;
 
-  .big {
-    @media @mobile {
-      font-size: 6vh;
-    }
-
-    @media @tablet {
-      font-size: 10vw;
-    }
-
-    @media @desktop {
-      font-size: 10vw;
-    }
-
-    @media @desktop-xl {
-      font-size: 8vw;
-    }
-
-    @media @desktop-xxl {
-      font-size: 7vw;
-    }
-  }
-
-  .big;
+  font: 1em;
 
   h2 {
     //margin: 0 0 6vh 0;
@@ -123,6 +127,53 @@ li {
         right: 5px;
       }
     }
+  }
+}
+
+input {
+  outline: none;
+  border: none;
+  background-color: #FFF;
+}
+
+.button-container {
+  line-height: 0px;
+}
+.main-button {
+  color: #999;
+  font-size: 0.22em;
+  padding: 8px 15px;
+  margin: 0 0.5em;
+}
+
+.error-message {
+  color: #FFF;
+  font-weight: bold;
+  margin: auto 0;
+}
+
+.comparator {
+  input {
+    display: inline-block;
+    margin: 0.33em auto;
+    padding: 10px 20px;
+    box-sizing: border-box;
+
+    border: 0;
+    outline: 0;
+
+    font-size: 0.5em;
+
+    @media @mobile {
+      font-size: 0.38em;
+    }
+
+    @media @desktop-xxl {
+      font-size: 0.35em;
+      //font-size: 3vw;
+    }
+
+    color: #222;
   }
 }
 

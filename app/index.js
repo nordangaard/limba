@@ -2,6 +2,9 @@ const riot = require('riot');
 const jquery = require('jquery');
 const reducer = require('./reducer');
 
+require('./tags/game-handler.tag');
+require('./tags/comparator-mode.tag');
+require('./tags/comparator.tag');
 require('./tags/word.tag');
 
 reducer.store.dispatch({type: 'INITIALIZE'});
@@ -13,10 +16,9 @@ reducer.store.subscribe(() => {
 })
 
 window.dis = function dis(word) {
-  reducer.store.dispatch({type: 'CHANGE_WORD', data: { word: word }});
+  reducer.store.dispatch({type: 'START_GAME'});
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  riot.mount('game-handler', 'game-handler', { store: reducer.store });
-  riot.mount('*');
+  riot.mount('*', { store: reducer.store });
 });

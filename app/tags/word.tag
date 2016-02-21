@@ -8,7 +8,5 @@
   </div>
 
   <script>
-    var elem = this.opts.$(this.root);
-    //elem.addClass('module');
   </script>
 </word>
