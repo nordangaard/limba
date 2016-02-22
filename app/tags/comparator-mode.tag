@@ -2,7 +2,7 @@ var _ = require('lodash');
 var $ = require('jquery');
 
 <comparator-mode>
-  <word data="{this.word}" ></word>
+  <word type="main" data="{this.word}" ></word>
   <comparator each="{this.opts.game.mode.comparators}" data="{this}"></comparator>
 
   <div class="button-container">

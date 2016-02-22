@@ -25884,7 +25884,7 @@
 	var _ = __webpack_require__(17);
 	var $ = __webpack_require__(3);
 
-	riot.tag2('comparator-mode', '<word data="{this.word}"></word> <comparator each="{this.opts.game.mode.comparators}" data="{this}"></comparator> <div class="button-container"> <span class="main-button" onclick="{this.checkAnswer}">Skip</span> <span class="main-button" onclick="{this.checkAnswer}">Skip</span> </div>', '', '', function(opts) {
+	riot.tag2('comparator-mode', '<word type="main" data="{this.word}"></word> <comparator each="{this.opts.game.mode.comparators}" data="{this}"></comparator> <div class="button-container"> <span class="main-button" onclick="{this.checkAnswer}">Skip</span> <span class="main-button" onclick="{this.checkAnswer}">Skip</span> </div>', '', '', function(opts) {
 	    this.on('update', function() {
 	      if(_.isArray(this.opts.game.words) && this.opts.game.words.length > 0)
 	        this.word = this.opts.game.words[0];

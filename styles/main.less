@@ -45,32 +45,40 @@ game-handler {
   height: 100%;
 }
 
-game-handler {
+game-handler,
+comparator-mode,
+comparator {
   display: block;
 }
 
 main {
   text-align: center;
+}
+
+.word[type='main'], comparator {
   @media @mobile {
-    font-size: 6vh;
+    font-size: 8vh;
   }
 
   @media @tablet {
-    font-size: 10vw;
+    font-size: 10vh;
   }
 
   @media @desktop {
-    font-size: 10vw;
+    font-size: 8vh;
   }
 
   @media @desktop-xl {
-    font-size: 7vw;
+    font-size: 8vw;
   }
 
   @media @desktop-xxl {
-    font-size: 6vw;
+    font-size: 8vw;
   }
 
+  @media @desktop-xxxl {
+    font-size: 5vw;
+  }
 }
 
 .app-container {
@@ -136,14 +144,9 @@ input {
   background-color: #FFF;
 }
 
-.button-container {
-  line-height: 0px;
-}
 .main-button {
   color: #999;
-  font-size: 0.22em;
   padding: 8px 15px;
-  margin: 0 0.5em;
 }
 
 .error-message {
@@ -162,13 +165,13 @@ input {
     border: 0;
     outline: 0;
 
-    font-size: 0.5em;
+    font-size: 0.35em;
 
     @media @mobile {
       font-size: 0.38em;
     }
 
-    @media @desktop-xxl {
+    @media @desktop-xxxl {
       font-size: 0.35em;
       //font-size: 3vw;
     }
