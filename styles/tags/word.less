@@ -1,0 +1,38 @@
+.word {
+
+  display: inline-block;
+  padding-top: 6vh;
+
+  font: 1em;
+
+  h2 {
+    //margin: 0 0 6vh 0;
+    margin: 0;
+    text-align: center;
+    text-transform: capitalize;
+
+  }
+
+  .info {
+    text-align: center;
+    font-size: 0.26em;
+    position: relative;
+
+    span {
+      cursor: pointer;
+      text-transform: capitalize;
+      &:first-child,
+      &:last-child {
+        position: absolute;
+      }
+
+      &:first-child {
+        left: 5px;
+      }
+
+      &:last-child {
+        right: 5px;
+      }
+    }
+  }
+}

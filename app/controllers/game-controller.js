@@ -14,8 +14,8 @@ GameController.add('INITIALIZE', function (state, action) {
     console.log('savedState');
     state = JSON.parse( savedState );
   } else {
-    //state = initState;
-    //state.gameModes = gameModes;
+    state = initState;
+    state.gameModes = gameModes;
   }
 
   return state;

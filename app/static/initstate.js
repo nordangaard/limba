@@ -16,10 +16,10 @@ let words = [{
   active: true
 }];
 
-$.get('/query/romanian/illness', function (res) {
-  console.log(res);
-  words.push(res);
-});
+// $.get('/query/romanian/illness', function (res) {
+//   console.log(res);
+//   words.push(res);
+// });
 
 module.exports = {
   words
