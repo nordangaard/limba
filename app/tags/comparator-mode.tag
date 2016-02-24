@@ -5,11 +5,7 @@ var $ = require('jquery');
   <word type="main" data="{this.word}" ></word>
   <comparator each="{this.opts.game.mode.comparators}" data="{this}"></comparator>
 
-  <div class="button-container">
-    <span class="main-button" onclick="{this.checkAnswer}">Skip</span>
-    <span class="main-button" onclick="{this.checkAnswer}">Skip</span>
-  </div>
-
+  <span class="main-button" onclick="{this.checkAnswer}">Skip</span>
 
 
   <!-- <input type="button" name="name" onClick="{this.checkAnswer}"

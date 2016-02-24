@@ -1,5 +1,5 @@
 const riot = require('riot');
-const jquery = require('jquery');
+const $ = require('jquery');
 const reducer = require('./reducer');
 
 require('./tags/game-handler.tag');
@@ -13,7 +13,14 @@ reducer.store.dispatch({type: 'START_GAME'});
 // You can subscribe to the updates manually, or use bindings to your view layer.
 reducer.store.subscribe(() => {
   console.log(reducer.store.getState());
-})
+});
+
+['car', 'day'].forEach((val) => {
+  $.get('/query/romanian/' + val, function (res) {
+    reducer.store.dispatch({type: 'ADD_WORD', word: res});
+  });
+});
+
 
 window.dis = function dis(word) {
   reducer.store.dispatch({type: 'START_GAME'});

@@ -35,8 +35,8 @@ app.use(helmet.nosniff());
 app.set('view engine', 'jade');
 app.set('views', fixPath('templates'));
 
-app.get('/query/romanian/:query', api.queryRom);
-app.get('/query/english/:query', api.queryEng);
+// app.get('/query/romanian/:query', api.queryRom);
+// app.get('/query/english/:query', api.queryEng);
 
 app.get('*', function (req, res) {
   res.render("index");
