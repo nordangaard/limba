@@ -1,14 +1,13 @@
-var _ = require('lodash');
-var ls = require('local-storage');
-var Controller = require('./controller');
-var initState = require('../static/initstate');
-var gameModes = require('../static/game-modes');
+const _ = require('lodash');
+const Controller = require('./controller');
+const initState = require('../static/initstate');
+const gameModes = require('../static/game-modes');
 
 
-var GameController = new Controller();
+const GameController = new Controller();
 
 GameController.add('INITIALIZE', function (state, action) {
-  let savedState = ls('limba-gamestate');
+  let savedState = this.getSavedState();
 
   if (savedState) {
     console.log('savedState');
@@ -19,7 +18,7 @@ GameController.add('INITIALIZE', function (state, action) {
   }
 
   return state;
-})
+});
 
 GameController.add('START_GAME', function (state, action) {
 
@@ -43,8 +42,7 @@ GameController.add('START_GAME', function (state, action) {
         mode: mode
       });
 
-      saveGameState(state);
-      return state;
+      return this.saveState(state);
     }
   }
 
@@ -90,10 +88,6 @@ function filterAndPick( arr, filter ) {
 function checkAnswer(word, answer, selector) {
   console.log( word, answer, _.get(word, selector) === answer );
   return ( _.get(word, selector) === answer );
-}
-
-function saveGameState( state ) {
-  ls('limba-gamestate', JSON.stringify(state));
 }
 
 module.exports = GameController;

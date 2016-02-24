@@ -1,4 +1,3 @@
-const $ = require('jquery');
 let words = [{
   type: 'noun',
   "word": "boală",
@@ -15,11 +14,6 @@ let words = [{
   "gender": "feminine",
   active: true
 }];
-
-// $.get('/query/romanian/illness', function (res) {
-//   console.log(res);
-//   words.push(res);
-// });
 
 module.exports = {
   words

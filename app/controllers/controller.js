@@ -1,8 +1,20 @@
-var _ = require('lodash');
+const _ = require('lodash');
+const ls = require('local-storage');
 
 class Controller {
   constructor() {
     this.methods = {};
+  }
+
+
+
+  saveState( state ) {
+    ls('limba-gamestate', JSON.stringify(state));
+    return state;
+  }
+
+  getSavedState( state ) {
+    return ls('limba-gamestate');
   }
 
   belongs( name ) {

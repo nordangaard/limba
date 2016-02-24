@@ -1,32 +1,23 @@
-const redux = require('redux')
+const _ = require('lodash');
+const Controller = require('./controller');
 
-let initState = {
-  words: [
-    {
-      word: 'Masina',
-      translation: 'Car',
-      gender: 'feminine',
-      number: 'singular'
-    }
-  ]
-}
+const SettingsController = new Controller();
 
-function counter(state = 0, action) {
-  switch (action.type) {
-  case 'INITIALIZE':
-    return initState;
-  case 'CHANGE_WORD':
-    state.words[0].word = action.data.word;
-    return state;
-  case 'DECREMENT':
-    return state - 1
-  default:
-    return state
+SettingsController.add('ADD_WORD', function (state, action) {
+
+  if( !_.find(state.words, {word: action.word.word}) ) {
+    action.word.active = true;
+    action.word.translation = action.word.eng;
+    action.word.type = 'noun';
+    
+    let words = state.words.concat([action.word]);
+
+    state = Object.assign({}, state, {
+      words: words
+    });
   }
-}
 
-let store = redux.createStore(counter)
+  return this.saveState(state);
+});
 
-module.exports = {
-  store: store
-}
+module.exports = SettingsController;
