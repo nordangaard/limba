@@ -10,7 +10,9 @@ function counter(state = {}, action) {
   return state
 }
 
-let store = redux.createStore(counter)
+
+let store = (window.devToolsExtension ? window.devToolsExtension()(redux.createStore) : redux.createStore)(counter, {});
+
 
 module.exports = {
   store: store

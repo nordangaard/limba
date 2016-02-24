@@ -12376,7 +12376,7 @@
 	  return state;
 	}
 
-	var store = redux.createStore(counter);
+	var store = (window.devToolsExtension ? window.devToolsExtension()(redux.createStore) : redux.createStore)(counter, {});
 
 	module.exports = {
 	  store: store
@@ -13224,8 +13224,8 @@
 	    console.log('savedState');
 	    state = JSON.parse(savedState);
 	  } else {
-	    //state = initState;
-	    //state.gameModes = gameModes;
+	    state = initState;
+	    state.gameModes = gameModes;
 	  }
 
 	  return state;
@@ -13274,6 +13274,7 @@
 	  var idx = action.id;
 	  state.game.mode.comparators[idx] = Object.assign({}, state.game.mode.comparators[idx], { answer: action.answer });
 
+	  saveGameState(state);
 	  return state;
 	});
 

@@ -14,8 +14,8 @@ GameController.add('INITIALIZE', function (state, action) {
     console.log('savedState');
     state = JSON.parse( savedState );
   } else {
-    //state = initState;
-    //state.gameModes = gameModes;
+    state = initState;
+    state.gameModes = gameModes;
   }
 
   return state;
@@ -61,6 +61,7 @@ GameController.add('SET_ANSWER', function (state, action) {
       { answer: action.answer }
   );
 
+  saveGameState( state );
   return state;
 });
 
