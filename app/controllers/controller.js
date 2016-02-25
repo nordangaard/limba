@@ -6,8 +6,6 @@ class Controller {
     this.methods = {};
   }
 
-
-
   saveState( state ) {
     ls('limba-gamestate', JSON.stringify(state));
     return state;

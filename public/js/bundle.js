@@ -47,7 +47,7 @@
 	'use strict';
 
 	var riot = __webpack_require__(1);
-	var jquery = __webpack_require__(3);
+	var $ = __webpack_require__(3);
 	var reducer = __webpack_require__(4);
 
 	__webpack_require__(22);
@@ -61,6 +61,12 @@
 	// You can subscribe to the updates manually, or use bindings to your view layer.
 	reducer.store.subscribe(function () {
 	  console.log(reducer.store.getState());
+	});
+
+	['car', 'day'].forEach(function (val) {
+	  $.get('/query/romanian/' + val, function (res) {
+	    reducer.store.dispatch({ type: 'ADD_WORD', word: res });
+	  });
 	});
 
 	window.dis = function dis(word) {
@@ -12363,6 +12369,7 @@
 
 	var redux = __webpack_require__(5);
 	var GameCtrl = __webpack_require__(16);
+	var SettingsCtrl = __webpack_require__(30);
 
 	function counter() {
 	  var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
@@ -12371,6 +12378,10 @@
 
 	  if (GameCtrl.belongs(action.type)) {
 	    return GameCtrl.reducer(state, action);
+	  }
+
+	  if (SettingsCtrl.belongs(action.type)) {
+	    return SettingsCtrl.reducer(state, action);
 	  }
 
 	  return state;
@@ -13210,7 +13221,6 @@
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 	var _ = __webpack_require__(17);
-	var ls = __webpack_require__(27);
 	var Controller = __webpack_require__(19);
 	var initState = __webpack_require__(20);
 	var gameModes = __webpack_require__(21);
@@ -13218,7 +13228,7 @@
 	var GameController = new Controller();
 
 	GameController.add('INITIALIZE', function (state, action) {
-	  var savedState = ls('limba-gamestate');
+	  var savedState = this.getSavedState();
 
 	  if (savedState) {
 	    console.log('savedState');
@@ -13232,6 +13242,7 @@
 	});
 
 	GameController.add('START_GAME', function (state, action) {
+	  var _this = this;
 
 	  var mode = filterAndPick(state.gameModes, { 'active': true });
 	  if (mode) {
@@ -13254,9 +13265,8 @@
 	          mode: mode
 	        });
 
-	        saveGameState(state);
 	        return {
-	          v: state
+	          v: _this.saveState(state)
 	        };
 	      }
 	    }();
@@ -13302,10 +13312,6 @@
 	function checkAnswer(word, answer, selector) {
 	  console.log(word, answer, _.get(word, selector) === answer);
 	  return _.get(word, selector) === answer;
-	}
-
-	function saveGameState(state) {
-	  ls('limba-gamestate', JSON.stringify(state));
 	}
 
 	module.exports = GameController;
@@ -25695,6 +25701,7 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var _ = __webpack_require__(17);
+	var ls = __webpack_require__(27);
 
 	var Controller = function () {
 	  function Controller() {
@@ -25704,6 +25711,17 @@
 	  }
 
 	  _createClass(Controller, [{
+	    key: 'saveState',
+	    value: function saveState(state) {
+	      ls('limba-gamestate', JSON.stringify(state));
+	      return state;
+	    }
+	  }, {
+	    key: 'getSavedState',
+	    value: function getSavedState(state) {
+	      return ls('limba-gamestate');
+	    }
+	  }, {
 	    key: 'belongs',
 	    value: function belongs(name) {
 	      return this.methods.hasOwnProperty(name);
@@ -25738,11 +25756,10 @@
 
 /***/ },
 /* 20 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	'use strict';
+	"use strict";
 
-	var $ = __webpack_require__(3);
 	var words = [{
 	  type: 'noun',
 	  "word": "boală",
@@ -25759,11 +25776,6 @@
 	  "gender": "feminine",
 	  active: true
 	}];
-
-	$.get('/query/romanian/illness', function (res) {
-	  console.log(res);
-	  words.push(res);
-	});
 
 	module.exports = {
 	  words: words
@@ -25885,7 +25897,7 @@
 	var _ = __webpack_require__(17);
 	var $ = __webpack_require__(3);
 
-	riot.tag2('comparator-mode', '<word type="main" data="{this.word}"></word> <comparator each="{this.opts.game.mode.comparators}" data="{this}"></comparator> <div class="button-container"> <span class="main-button" onclick="{this.checkAnswer}">Skip</span> <span class="main-button" onclick="{this.checkAnswer}">Skip</span> </div>', '', '', function(opts) {
+	riot.tag2('comparator-mode', '<word type="main" data="{this.word}"></word> <comparator each="{this.opts.game.mode.comparators}" data="{this}"></comparator> <span class="main-button" onclick="{this.checkAnswer}">Skip</span>', '', '', function(opts) {
 	    this.on('update', function() {
 	      if(_.isArray(this.opts.game.words) && this.opts.game.words.length > 0)
 	        this.word = this.opts.game.words[0];
@@ -26078,6 +26090,36 @@
 	};
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _ = __webpack_require__(17);
+	var Controller = __webpack_require__(19);
+
+	var SettingsController = new Controller();
+
+	SettingsController.add('ADD_WORD', function (state, action) {
+
+	  if (!_.find(state.words, { word: action.word.word })) {
+	    action.word.active = true;
+	    action.word.translation = action.word.eng;
+	    action.word.type = 'noun';
+
+	    var words = state.words.concat([action.word]);
+
+	    state = Object.assign({}, state, {
+	      words: words
+	    });
+	  }
+
+	  return this.saveState(state);
+	});
+
+	module.exports = SettingsController;
 
 /***/ }
 /******/ ]);
