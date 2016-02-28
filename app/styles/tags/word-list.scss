@@ -1,0 +1,47 @@
+@import '../_variables';
+
+.word-list {
+  
+  .collection-item.avatar {
+    min-height: 65px !important;
+  }
+
+  .collection-item.avatar span, .collection-item.avatar i {
+    line-height: 45px;
+    font-size: 25px !important;
+  }
+
+  .collection-item.avatar .secondary-content {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    padding: 0 10px;
+    margin-right: -5px;
+  }
+
+  .collection-item.avatar .secondary-content.last{
+    margin-right: -10px;
+  }
+
+  @media #{$mobile} {
+    .input-field {
+      margin-left: 3rem;
+    }
+  }
+
+  .input-field label {
+    color: #DDD;
+  }
+
+  .input-field input[type=text]:focus + label {
+    color: #FFF;
+  }
+
+  input {
+    color: #fff;
+    &:focus {
+      border-bottom: 1px solid #fff !important;
+      box-shadow: 0 1px 0 0 #fff !important;
+    }
+  }
+}

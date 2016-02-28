@@ -1,0 +1,13 @@
+.navigate-icon {
+  position: absolute;
+  top: 22px;
+  left: 15px;
+  line-height: 2rem;
+
+  a {
+    opacity: 0.3;
+    &:focus {
+      opacity: 1;
+    }
+  }
+}

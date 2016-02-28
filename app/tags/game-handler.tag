@@ -9,7 +9,9 @@
 
   <script>
 
-    this.state = this.opts.store.getState();
+    this.on('update', function() {
+      this.state = this.opts.state;
+    });
 
     this.mode = function ( mode ) {
       return ( this.state.game.mode.type === mode )
@@ -23,9 +25,5 @@
       this.opts.store.dispatch({type: 'SET_ANSWER', id: id, answer: answer });
     }.bind(this);
 
-    this.opts.store.subscribe(function () {
-      this.state = this.opts.store.getState();
-      this.update();
-    }.bind(this));
   </script>
 </game-handler>

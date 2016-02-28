@@ -1,3 +1,5 @@
+@import '../_variables';
+
 .comparator {
   input {
     display: inline-block;
@@ -10,11 +12,11 @@
 
     font-size: 0.35em;
 
-    @media @mobile {
+    @media #{$mobile} {
       font-size: 0.38em;
     }
 
-    @media @desktop-xxxl {
+    @media #{$desktop-xxxl} {
       font-size: 0.35em;
       //font-size: 3vw;
     }

@@ -10,11 +10,13 @@ GameController.add('INITIALIZE', function (state, action) {
   let savedState = this.getSavedState();
 
   if (savedState) {
-    console.log('savedState');
-    state = JSON.parse( savedState );
+    state = savedState;
   } else {
     state = initState;
     state.gameModes = gameModes;
+    state.page = { active: 'game' };
+
+    state = this.dispatch(state, {type: 'START_GAME'});
   }
 
   return state;

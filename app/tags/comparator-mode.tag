@@ -15,7 +15,8 @@ var $ = require('jquery');
 
   <script>
     this.on('update', function() {
-      if(_.isArray(this.opts.game.words) && this.opts.game.words.length > 0)
+      if(this.opts.game &&
+          _.isArray(this.opts.game.words) && this.opts.game.words.length > 0)
         this.word = this.opts.game.words[0];
 
       // console.log('THE GAME', this.opts.game);

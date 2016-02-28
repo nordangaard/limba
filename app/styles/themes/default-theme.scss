@@ -1,32 +1,35 @@
 .default-theme {
   &.app-container {
-    background-color: @df-main-color;
-    color: #222;
+    background-color: $df-main-color;
 
     .main-panel {
-      color: @df-text-color;
+      color: $df-text-color;
+    }
+
+    .page li {
+      background-color: white;
     }
 
     .word {
-      color: @df-text-color;
+      color: $df-text-color;
 
       .info {
         span {
           color: transparent;
 
           &:hover {
-            color: @df-text-color;
+            color: $df-text-color;
           }
         }
       }
     }
 
     .logo {
-      background-color: @df-logo-color;
-      color: @df-main-color;
+      background-color: $df-logo-color;
+      color: $df-main-color;
 
       &:hover {
-        background-color: @df-logo-hover-color;
+        background-color: $df-logo-hover-color;
       }
     }
 
@@ -55,7 +58,6 @@
 
     a {
       text-decoration: none;
-      color: @df-text-color;
     }
 
 

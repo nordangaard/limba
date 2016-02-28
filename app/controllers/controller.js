@@ -12,7 +12,8 @@ class Controller {
   }
 
   getSavedState( state ) {
-    return ls('limba-gamestate');
+    console.log(JSON.parse( ls('limba-gamestate') ));
+    return JSON.parse( ls('limba-gamestate') );
   }
 
   belongs( name ) {
@@ -36,6 +37,10 @@ class Controller {
 
   reducer( state, action ) {
     return this.methods[action.type].apply(this, [state, action]);
+  }
+
+  dispatch( state, action ) {
+    return this.reducer( state, action );
   }
 }
 

@@ -17,42 +17,46 @@
 html,
 body,
 main,
-game-handler {
-  height: 100%;
+app-handler,
+.page {
+  min-height: 100%;
 }
 
-game-handler,
+.page,
+app-handler,
+word-list,
+word-item,
 comparator-mode,
 comparator {
   display: block;
 }
 
-main {
+game-handler {
   text-align: center;
 }
 
 .word[type='main'], comparator {
-  @media @mobile {
-    font-size: 8vh;
+  @media #{$mobile} {
+    font-size: 14vw;
   }
 
-  @media @tablet {
+  @media #{$tablet} {
     font-size: 10vh;
   }
 
-  @media @desktop {
+  @media #{$desktop} {
     font-size: 8vh;
   }
 
-  @media @desktop-xl {
+  @media #{$desktop-xl} {
     font-size: 8vw;
   }
 
-  @media @desktop-xxl {
+  @media #{$desktop-xxl} {
     font-size: 8vw;
   }
 
-  @media @desktop-xxxl {
+  @media #{$desktop-xxxl} {
     font-size: 5vw;
   }
 }
@@ -60,6 +64,7 @@ main {
 .app-container {
   min-height: 100% !important;
   width: 100%;
+  overflow: auto;
 
   font-size: 18px;
 }

@@ -1,6 +1,8 @@
+require('../styles/tags/comparator');
+
 <comparator class="comparator" if="{this.active}">
   <div>
-    <input type="text" name="name" value="{this.answer}" autocomplete="off"
+    <input type="game" name="name" value="{this.answer}" autocomplete="off"
       placeholder="{this.name}" onchange="{this.setAnswer}" />
     <label if={this.correct === true}>T</label>
     <label if={this.correct === false}>F</label>
