@@ -12,6 +12,9 @@ require('../styles/tags/word-list');
     </word-item>
   </div>
 
+  <a class="add-word-btn btn-floating btn-large waves-effect waves-dark white">
+    <i class="material-icons default-text">add</i>
+  </a>
 
   <script>
 
@@ -29,6 +32,8 @@ require('../styles/tags/word-list');
       var searchValue = e ? e.target.value : $('#search').value;
 
       if( _.isString(searchValue) ) {
+        searchValue = searchValue.toLowerCase();
+
         this.words = _.filter(this.opts.words, function (val) {
           return (
             _.startsWith(val.translation, searchValue) ||
@@ -36,7 +41,6 @@ require('../styles/tags/word-list');
             _.startsWith(val.type, searchValue)
           );
         });
-        console.log('search', searchValue, this.words);
         this.update();
       }
     }, 300);

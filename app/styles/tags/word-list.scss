@@ -1,7 +1,7 @@
 @import '../_variables';
 
 .word-list {
-  
+
   .collection-item.avatar {
     min-height: 65px !important;
   }
@@ -42,6 +42,17 @@
     &:focus {
       border-bottom: 1px solid #fff !important;
       box-shadow: 0 1px 0 0 #fff !important;
+    }
+  }
+
+  .add-word-btn {
+    position: fixed;
+    bottom: 10%;
+    right: 20%;
+
+    @media #{$mobile} {
+      bottom: 5%;
+      right: 10%;
     }
   }
 }

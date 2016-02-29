@@ -26864,7 +26864,7 @@
 /* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_LOCAL_MODULE_0__;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {'use strict';var _typeof=typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"?function(obj){return typeof obj;}:function(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol?"symbol":typeof obj;}; /*!
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_LOCAL_MODULE_0__;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {'use strict';var _typeof=typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"?function(obj){return typeof obj;}:function(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol?"symbol":typeof obj;}; /*!
 	 * Materialize v0.97.5 (http://materializecss.com)
 	 * Copyright 2014-2015 Materialize
 	 * MIT License (https://raw.githubusercontent.com/Dogfalo/materialize/master/LICENSE)
@@ -30677,7 +30677,7 @@
 
 	__webpack_require__(66);
 
-	riot.tag2('word-list', '<div class="input-field"> <input id="search" type="text" onkeyup="{this.search}"> <label for="search">Search</label> </div> <div class="collection"> <word-item each="{this.words}"> </word-item> </div>', '', 'class="word-list"', function(opts) {
+	riot.tag2('word-list', '<div class="input-field"> <input id="search" type="text" onkeyup="{this.search}"> <label for="search">Search</label> </div> <div class="collection"> <word-item each="{this.words}"> </word-item> </div> <a class="add-word-btn btn-floating btn-large waves-effect waves-dark white"> <i class="material-icons default-text">add</i> </a>', '', 'class="word-list"', function(opts) {
 
 	    this.cachedWords = [];
 
@@ -30693,6 +30693,8 @@
 	      var searchValue = e ? e.target.value : $('#search').value;
 
 	      if( _.isString(searchValue) ) {
+	        searchValue = searchValue.toLowerCase();
+
 	        this.words = _.filter(this.opts.words, function (val) {
 	          return (
 	            _.startsWith(val.translation, searchValue) ||
@@ -30700,7 +30702,6 @@
 	            _.startsWith(val.type, searchValue)
 	          );
 	        });
-	        console.log('search', searchValue, this.words);
 	        this.update();
 	      }
 	    }, 300);
@@ -30739,7 +30740,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(29)();
-	exports.push([module.id, ".word-list .collection-item.avatar {\n  min-height: 65px !important; }\n\n.word-list .collection-item.avatar span, .word-list .collection-item.avatar i {\n  line-height: 45px;\n  font-size: 25px !important; }\n\n.word-list .collection-item.avatar .secondary-content {\n  position: static !important;\n  top: auto !important;\n  right: auto !important;\n  padding: 0 10px;\n  margin-right: -5px; }\n\n.word-list .collection-item.avatar .secondary-content.last {\n  margin-right: -10px; }\n\n@media only screen and (max-width: 529px) {\n  .word-list .input-field {\n    margin-left: 3rem; } }\n\n.word-list .input-field label {\n  color: #DDD; }\n\n.word-list .input-field input[type=text]:focus + label {\n  color: #FFF; }\n\n.word-list input {\n  color: #fff; }\n  .word-list input:focus {\n    border-bottom: 1px solid #fff !important;\n    box-shadow: 0 1px 0 0 #fff !important; }\n", ""]);
+	exports.push([module.id, ".word-list .collection-item.avatar {\n  min-height: 65px !important; }\n\n.word-list .collection-item.avatar span, .word-list .collection-item.avatar i {\n  line-height: 45px;\n  font-size: 25px !important; }\n\n.word-list .collection-item.avatar .secondary-content {\n  position: static !important;\n  top: auto !important;\n  right: auto !important;\n  padding: 0 10px;\n  margin-right: -5px; }\n\n.word-list .collection-item.avatar .secondary-content.last {\n  margin-right: -10px; }\n\n@media only screen and (max-width: 529px) {\n  .word-list .input-field {\n    margin-left: 3rem; } }\n\n.word-list .input-field label {\n  color: #DDD; }\n\n.word-list .input-field input[type=text]:focus + label {\n  color: #FFF; }\n\n.word-list input {\n  color: #fff; }\n  .word-list input:focus {\n    border-bottom: 1px solid #fff !important;\n    box-shadow: 0 1px 0 0 #fff !important; }\n\n.word-list .add-word-btn {\n  position: fixed;\n  bottom: 10%;\n  right: 20%; }\n  @media only screen and (max-width: 529px) {\n    .word-list .add-word-btn {\n      bottom: 5%;\n      right: 10%; } }\n", ""]);
 
 /***/ },
 /* 68 */
@@ -30747,7 +30748,7 @@
 
 	var riot = __webpack_require__(1);
 
-	riot.tag2('word-item', '<i class="material-icons default lighten-1 circle" style="font-weight: bold;">done_all</i> <span class="title">{this.word}</span> <span class="type badge">{this.type}</span> <a href="#!" class="secondary-content waves-effect last waves-default"><i class="material-icons">grade</i></a> <a href="#modal1" class="secondary-content waves-effect waves-default modal-trigger"><i class="material-icons">edit</i></a>', 'word-item { display: block; } .badge.type { right: 100px !important; } .title { text-transform: uppercase; }', 'class="collection-item avatar"', function(opts) {
+	riot.tag2('word-item', '<i class="material-icons default lighten-1 circle" style="font-weight: bold;">done_all</i> <span class="title">{this.word}</span> <span class="type badge hide-on-small-only">{this.type}</span> <a href="#!" class="secondary-content waves-effect last waves-default"><i class="material-icons">grade</i></a> <a href="#modal1" class="secondary-content waves-effect waves-default modal-trigger"><i class="material-icons">edit</i></a>', 'word-item { display: block; } .badge.type { right: 100px !important; } .title { text-transform: uppercase; }', 'class="collection-item avatar"', function(opts) {
 	    console.log(this);
 	}, '{ }');
 
@@ -30878,7 +30879,7 @@
 
 	var riot = __webpack_require__(1);
 
-	riot.tag2('word-modal', '<div class="modal-content default white-text"> <h4>Modal Header</h4> </div> <div class="modal-content"> <form class=""> <div class="row"> <div class="input-field col s6"> <input id="first_name" type="text" class="validate"> <label for="first_name">First Name</label> </div> <div class="input-field col s6"> <input id="last_name" type="text" class="validate"> <label for="last_name">Last Name</label> </div> </div> </form> </div> <div class="modal-footer"> <a href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Agree</a> </div>', 'word-modal { display: block; }', 'id="modal1" class="modal"', function(opts) {
+	riot.tag2('word-modal', '<div class="modal-content default white-text"> <h4>Creion <span class="chip"> Noun </span> </h4> </div> <div class="modal-content"> <form class=""> <div class="row"> <div class="input-field col s6"> <input id="first_name" type="text" class="validate"> <label for="first_name">First Name</label> </div> <div class="input-field col s6"> <input id="last_name" type="text" class="validate"> <label for="last_name">Last Name</label> </div> </div> </form> </div> <div class="modal-footer"> <a href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Abort</a> <a href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Save</a> </div>', 'word-modal { display: block; } .chip { float: right; margin-left: 5px; }', 'id="modal1" class="modal"', function(opts) {
 	    console.log(this);
 	});
 

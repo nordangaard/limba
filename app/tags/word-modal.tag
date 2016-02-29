@@ -1,7 +1,11 @@
 <word-modal id="modal1" class="modal">
 
   <div class="modal-content default  white-text">
-    <h4>Modal Header</h4>
+    <h4>Creion
+      <span class="chip">
+        Noun
+      </span>
+    </h4>
   </div>
   <div class="modal-content">
     <form class="">
@@ -18,12 +22,18 @@
     </form>
   </div>
   <div class="modal-footer">
-    <a href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Agree</a>
+    <a href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Abort</a>
+    <a href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Save</a>
   </div>
 
   <style media="screen">
     word-modal {
       display: block;
+    }
+
+    .chip {
+      float: right;
+      margin-left: 5px;
     }
   </style>
 
