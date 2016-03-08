@@ -46,7 +46,7 @@
 
 	'use strict';
 
-	var riot = __webpack_require__(1);
+	window.riot = __webpack_require__(1);
 	var $ = window.$ = window.jQuery = __webpack_require__(3);
 	var reducer = __webpack_require__(4);
 
@@ -54,18 +54,34 @@
 	__webpack_require__(56);
 	__webpack_require__(59);
 
+	riot.mixin('bubble', function () {
+	  var stashedArgs = [].splice.call(arguments, 0);
+	  var args = stashedArgs.slice();
+
+	  var eventName = args.splice(0, 1)[0];
+	  this.trigger(eventName, args);
+
+	  if (this.parent) this.parent.bubble.apply(this.parent, stashedArgs);
+	});
+
+	riot.mixin('dispatch', {
+	  'dispatch': function dispatch(action) {
+	    reducer.store.dispatch(action);
+	  }
+	});
+
 	__webpack_require__(61);
 
 	__webpack_require__(64);
 	__webpack_require__(65);
 	__webpack_require__(68);
-	__webpack_require__(77);
-
 	__webpack_require__(69);
+
 	__webpack_require__(70);
 	__webpack_require__(71);
+	__webpack_require__(72);
 
-	__webpack_require__(74);
+	__webpack_require__(75);
 
 	reducer.store.dispatch({ type: 'INITIALIZE' });
 
@@ -92,7 +108,7 @@
 	};
 
 	document.addEventListener('DOMContentLoaded', function () {
-	  riot.mount('*', { store: reducer.store });
+	  riot.mount('*', { store: reducer.store, dispatch: 'dispatch' });
 
 	  window.$(document).ready(function () {
 	    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
@@ -26043,6 +26059,8 @@
 
 	'use strict';
 
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 	var _ = __webpack_require__(17);
 	var Controller = __webpack_require__(19);
 	var md5 = __webpack_require__(26);
@@ -26068,6 +26086,27 @@
 	  return this.saveState(state);
 	});
 
+	SettingsController.add('EDIT_WORD', function (state, action) {
+
+	  state.page.settings = Object.assign({}, state.page.settings, {
+	    'wordModal': {
+	      active: true,
+	      word: action.word
+	    }
+	  });
+
+	  return state;
+	});
+
+	SettingsController.add('TOGGLE_WORD', function (state, action) {
+
+	  var idx = _.findIndex(state.words, { 'id': action.word.id });
+
+	  state.words = replaceInArray(idx, state.words, { active: false });
+
+	  return this.saveState(state);
+	});
+
 	SettingsController.add('SWITCH_PAGE', function (state, action) {
 
 	  state = Object.assign({}, state, {
@@ -26079,6 +26118,12 @@
 
 	  return this.saveState(state);
 	});
+
+	function replaceInArray(idx, arr, object) {
+	  var obj = Object.assign({}, arr[idx], object);
+
+	  return [].concat(_toConsumableArray(arr.slice(0, idx)), [obj], _toConsumableArray(arr.slice(idx + 1)));
+	}
 
 	module.exports = SettingsController;
 
@@ -26864,7 +26909,7 @@
 /* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_LOCAL_MODULE_0__;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {'use strict';var _typeof=typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"?function(obj){return typeof obj;}:function(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol?"symbol":typeof obj;}; /*!
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_LOCAL_MODULE_0__;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {'use strict';var _typeof=typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"?function(obj){return typeof obj;}:function(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol?"symbol":typeof obj;}; /*!
 	 * Materialize v0.97.5 (http://materializecss.com)
 	 * Copyright 2014-2015 Materialize
 	 * MIT License (https://raw.githubusercontent.com/Dogfalo/materialize/master/LICENSE)
@@ -30660,10 +30705,13 @@
 
 	var riot = __webpack_require__(1);
 
-	riot.tag2('settings-handler', '<div class="row"> <div class="col s12 l6 push-l3"> <word-list words="{this.state.words}"></word-list> </div> </div> <word-modal></word-modal>', '', '', function(opts) {
+	riot.tag2('settings-handler', '<div class="row"> <div class="col s12 l6 push-l3"> <word-list words="{this.state.words}"></word-list> </div> </div> <word-modal state="{this.state.page.settings.wordModal}"></word-modal>', '', '', function(opts) {
 	    this.on('update', function() {
 	      this.state = this.opts.state;
 	    });
+
+	    console.log(this);
+
 	}, '{ }');
 
 
@@ -30748,13 +30796,56 @@
 
 	var riot = __webpack_require__(1);
 
-	riot.tag2('word-item', '<i class="material-icons default lighten-1 circle" style="font-weight: bold;">done_all</i> <span class="title">{this.word}</span> <span class="type badge hide-on-small-only">{this.type}</span> <a href="#!" class="secondary-content waves-effect last waves-default"><i class="material-icons">grade</i></a> <a href="#modal1" class="secondary-content waves-effect waves-default modal-trigger"><i class="material-icons">edit</i></a>', 'word-item { display: block; } .badge.type { right: 100px !important; } .title { text-transform: uppercase; }', 'class="collection-item avatar"', function(opts) {
-	    console.log(this);
+	riot.tag2('word-item', '<i class="material-icons default lighten-1 circle" style="font-weight: bold;">done_all</i> <span class="title">{this.word.word}</span> <span class="type badge hide-on-small-only">{this.word.type}</span> <a href="#!" class="secondary-content waves-effect last waves-default" onclick="{this.toggleActive}"> <i class="{\'grey-text\': (!this.word.active), \'material-icons\': true}">grade</i> </a> <a href="#" class="secondary-content waves-effect waves-default" onclick="{this.edit}"> <i class="material-icons">edit</i> </a>', 'word-item { display: block; } .badge.type { right: 100px !important; } .title { text-transform: uppercase; }', 'class="collection-item avatar"', function(opts) {
+
+	    this.mixin('dispatch');
+
+	    this.edit = function () {
+	      this.dispatch({type: 'EDIT_WORD', word: this._item});
+
+	    }
+
+	    this.toggleActive = function () {
+	      this.dispatch({type: 'TOGGLE_WORD', word: this._item});
+	    }
+
+	    this.word = this._item;
+
+	    this.on('update', function () {
+	      console.log(this);
+	      this.word = this._item;
+	    });
+
 	}, '{ }');
 
 
 /***/ },
 /* 69 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var riot = __webpack_require__(1);
+
+	__webpack_require__(76);
+
+	riot.tag2('word-modal', '<div class="modal-content default white-text"> <h4> <strong>{this.word.word}</strong> <span class="chip"> {this.word.type} </span> <span class="chip" if="{this.word.gender}"> {this.word.gender} </span> </h4> </div> <div class="modal-content"> <form class=""> <div class="row"> <div class="input-field col s6"> <input id="word" type="text" value="{this.word.word}"> <label class="{\'active\': (this.word.word)}" for="word">Word</label> </div> <div class="input-field col s6"> <input id="translation" type="text" value="{this.word.translation}"> <label class="{\'active\': (this.word.translation)}" for="translation">Translation</label> </div> </div> <div class="" if="{this.word.type === \'noun\'}"> <div class="row"> <div class="input-field col s12 m4"> <input id="definite" type="text" value="{this.word.definite.word}"> <label class="{\'active\': (this.word.definite.word)}" for="definite">Definite Article</label> </div> <div class="input-field col s12 m4"> <input id="plural" type="text" value="{this.word.indefinite.plural}"> <label class="{\'active\': (this.word.indefinite.plural)}" for="plural">Plural</label> </div> <div class="input-field col s12 m4"> <input id="definite_plural" type="text" value="{this.word.definite.plural}"> <label class="{\'active\': (this.word.definite.plural)}" for="definite_plural">Definite Plural</label> </div> </div> </div> </form> </div> <div class="modal-footer"> <a href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Abort</a> <a href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Save</a> </div>', 'word-modal { display: block; } .chip { float: right; margin-left: 5px; }', 'id="word-modal" if="{this.state.active}" class="modal"', function(opts) {
+	    this.on('update', function() {
+	      if (!this.opts.state) return false;
+
+	      this.state = this.opts.state;
+	      this.word = this.state.word || {};
+	      console.log(this.state);
+	    });
+
+	    this.on('updated', function() {
+	      console.log(this);
+	      if (this.state && this.state.active)
+	        $('#word-modal').openModal();
+	    });
+	}, '{ }');
+
+
+/***/ },
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var riot = __webpack_require__(1);
@@ -30781,7 +30872,7 @@
 
 
 /***/ },
-/* 70 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var riot = __webpack_require__(1);
@@ -30809,12 +30900,12 @@
 
 
 /***/ },
-/* 71 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var riot = __webpack_require__(1);
 
-	__webpack_require__(72);
+	__webpack_require__(73);
 
 	riot.tag2('comparator', '<div> <input type="game" name="name" value="{this.answer}" autocomplete="off" placeholder="{this.name}" onchange="{this.setAnswer}"> <label if="{this.correct === true}">T</label> <label if="{this.correct === false}">F</label> </div>', '', 'class="comparator" if="{this.active}"', function(opts) {
 
@@ -30829,13 +30920,13 @@
 
 
 /***/ },
-/* 72 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(73);
+	var content = __webpack_require__(74);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(55)(content, {});
@@ -30855,14 +30946,14 @@
 	}
 
 /***/ },
-/* 73 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(29)();
 	exports.push([module.id, ".comparator input {\n  display: inline-block;\n  margin: 0.33em auto;\n  padding: 10px 20px;\n  box-sizing: border-box;\n  border: 0;\n  outline: 0;\n  font-size: 0.35em;\n  color: #222; }\n  @media only screen and (max-width: 529px) {\n    .comparator input {\n      font-size: 0.38em; } }\n  @media only screen and (min-width: 1950px) {\n    .comparator input {\n      font-size: 0.35em; } }\n", ""]);
 
 /***/ },
-/* 74 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var riot = __webpack_require__(1);
@@ -30872,17 +30963,37 @@
 
 
 /***/ },
-/* 75 */,
-/* 76 */,
+/* 76 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(77);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(55)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/sass-loader/index.js!./word-modal.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/sass-loader/index.js!./word-modal.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
 /* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var riot = __webpack_require__(1);
-
-	riot.tag2('word-modal', '<div class="modal-content default white-text"> <h4>Creion <span class="chip"> Noun </span> </h4> </div> <div class="modal-content"> <form class=""> <div class="row"> <div class="input-field col s6"> <input id="first_name" type="text" class="validate"> <label for="first_name">First Name</label> </div> <div class="input-field col s6"> <input id="last_name" type="text" class="validate"> <label for="last_name">Last Name</label> </div> </div> </form> </div> <div class="modal-footer"> <a href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Abort</a> <a href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Save</a> </div>', 'word-modal { display: block; } .chip { float: right; margin-left: 5px; }', 'id="modal1" class="modal"', function(opts) {
-	    console.log(this);
-	});
-
+	exports = module.exports = __webpack_require__(29)();
+	exports.push([module.id, ".modal-content h4 strong {\n  text-transform: uppercase; }\n\n.chip {\n  margin-left: 15px; }\n", ""]);
 
 /***/ }
 /******/ ]);

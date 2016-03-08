@@ -1,10 +1,27 @@
-const riot = require('riot');
+window.riot = require('riot');
 var $ = window.$ = window.jQuery = require('jquery');
 const reducer = require('./reducer');
 
 require('./styles/materialize/sass/materialize');
 require('./styles/materialize/js/bin/materialize.js');
 require('./styles/main');
+
+
+riot.mixin('bubble', function () {
+  const stashedArgs = [].splice.call(arguments,0);
+  let args = stashedArgs.slice();
+
+  const eventName = args.splice(0,1)[0];
+  this.trigger(eventName, args);
+
+  if(this.parent) this.parent.bubble.apply(this.parent, stashedArgs);
+});
+
+riot.mixin('dispatch', {
+  'dispatch': function (action) {
+    reducer.store.dispatch(action);
+  }
+});
 
 require('./tags/app-handler.tag');
 
@@ -46,7 +63,7 @@ window.dis = function dis(word) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  riot.mount('*', { store: reducer.store });
+  riot.mount('*', {store: reducer.store, dispatch: 'dispatch'});
 
   window.$(document).ready(function(){
    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered

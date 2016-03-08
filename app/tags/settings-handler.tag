@@ -5,11 +5,14 @@
     </div>
   </div>
 
-  <word-modal></word-modal>
+  <word-modal state="{this.state.page.settings.wordModal}"></word-modal>
 
   <script>
     this.on('update', function() {
       this.state = this.opts.state;
     });
+
+    console.log(this);
+
   </script>
 </settings-handler>
