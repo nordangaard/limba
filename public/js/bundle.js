@@ -48,7 +48,8 @@
 
 	window.riot = __webpack_require__(1);
 	var $ = window.$ = window.jQuery = __webpack_require__(3);
-	var reducer = __webpack_require__(4);
+	var _ = window._ = __webpack_require__(4);
+	var reducer = __webpack_require__(6);
 
 	__webpack_require__(27);
 	__webpack_require__(56);
@@ -76,12 +77,13 @@
 	__webpack_require__(65);
 	__webpack_require__(68);
 	__webpack_require__(69);
-
-	__webpack_require__(70);
-	__webpack_require__(71);
 	__webpack_require__(72);
 
+	__webpack_require__(73);
+	__webpack_require__(74);
 	__webpack_require__(75);
+
+	__webpack_require__(78);
 
 	reducer.store.dispatch({ type: 'INITIALIZE' });
 
@@ -89,19 +91,6 @@
 	reducer.store.subscribe(function () {
 	  console.log(reducer.store.getState());
 	});
-
-	// ['car', 'day', 'teacher', 'book', 'country', 'house', 'door', 'icecream',
-	//   'apartment', 'flag', 'bed'].forEach((val) => {
-	//   $.get('/query/romanian/' + val, function (res) {
-	//     reducer.store.dispatch({type: 'ADD_WORD', word: res});
-	//   });
-	// });
-
-	// ['rest','ticket','dolls','mom','chess','scent','pencil','join','fireman','club','letter','pies'].forEach((val) => {
-	//   $.get('/query/romanian/' + val, function (res) {
-	//     reducer.store.dispatch({type: 'ADD_WORD', word: res});
-	//   });
-	// });
 
 	window.dis = function dis(word) {
 	  reducer.store.dispatch({ type: 'START_GAME' });
@@ -113,6 +102,7 @@
 	  window.$(document).ready(function () {
 	    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
 	    window.$('.modal-trigger').leanModal();
+	    window.$('select').material_select();
 	  });
 	});
 
@@ -12402,963 +12392,6 @@
 
 /***/ },
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var redux = __webpack_require__(5);
-	var GameCtrl = __webpack_require__(16);
-	var SettingsCtrl = __webpack_require__(25);
-
-	function counter() {
-	  var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-	  var action = arguments[1];
-
-
-	  if (GameCtrl.belongs(action.type)) {
-	    return GameCtrl.reducer(state, action);
-	  }
-
-	  if (SettingsCtrl.belongs(action.type)) {
-	    return SettingsCtrl.reducer(state, action);
-	  }
-
-	  return state;
-	}
-
-	var store = (window.devToolsExtension ? window.devToolsExtension()(redux.createStore) : redux.createStore)(counter, {});
-
-	module.exports = {
-	  store: store
-	};
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
-
-	exports.__esModule = true;
-	exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
-
-	var _createStore = __webpack_require__(7);
-
-	var _createStore2 = _interopRequireDefault(_createStore);
-
-	var _combineReducers = __webpack_require__(11);
-
-	var _combineReducers2 = _interopRequireDefault(_combineReducers);
-
-	var _bindActionCreators = __webpack_require__(13);
-
-	var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
-
-	var _applyMiddleware = __webpack_require__(14);
-
-	var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
-
-	var _compose = __webpack_require__(15);
-
-	var _compose2 = _interopRequireDefault(_compose);
-
-	var _warning = __webpack_require__(12);
-
-	var _warning2 = _interopRequireDefault(_warning);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-	/*
-	* This is a dummy function to check if the function name has been altered by minification.
-	* If the function has been minified and NODE_ENV !== 'production', warn the user.
-	*/
-	function isCrushed() {}
-
-	if (process.env.NODE_ENV !== 'production' && typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') {
-	  (0, _warning2["default"])('You are currently using minified code outside of NODE_ENV === \'production\'. ' + 'This means that you are running a slower development build of Redux. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) ' + 'to ensure you have the correct code for your production build.');
-	}
-
-	exports.createStore = _createStore2["default"];
-	exports.combineReducers = _combineReducers2["default"];
-	exports.bindActionCreators = _bindActionCreators2["default"];
-	exports.applyMiddleware = _applyMiddleware2["default"];
-	exports.compose = _compose2["default"];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
-
-/***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	// shim for using process in browser
-
-	var process = module.exports = {};
-	var queue = [];
-	var draining = false;
-	var currentQueue;
-	var queueIndex = -1;
-
-	function cleanUpNextTick() {
-	    draining = false;
-	    if (currentQueue.length) {
-	        queue = currentQueue.concat(queue);
-	    } else {
-	        queueIndex = -1;
-	    }
-	    if (queue.length) {
-	        drainQueue();
-	    }
-	}
-
-	function drainQueue() {
-	    if (draining) {
-	        return;
-	    }
-	    var timeout = setTimeout(cleanUpNextTick);
-	    draining = true;
-
-	    var len = queue.length;
-	    while(len) {
-	        currentQueue = queue;
-	        queue = [];
-	        while (++queueIndex < len) {
-	            if (currentQueue) {
-	                currentQueue[queueIndex].run();
-	            }
-	        }
-	        queueIndex = -1;
-	        len = queue.length;
-	    }
-	    currentQueue = null;
-	    draining = false;
-	    clearTimeout(timeout);
-	}
-
-	process.nextTick = function (fun) {
-	    var args = new Array(arguments.length - 1);
-	    if (arguments.length > 1) {
-	        for (var i = 1; i < arguments.length; i++) {
-	            args[i - 1] = arguments[i];
-	        }
-	    }
-	    queue.push(new Item(fun, args));
-	    if (queue.length === 1 && !draining) {
-	        setTimeout(drainQueue, 0);
-	    }
-	};
-
-	// v8 likes predictible objects
-	function Item(fun, array) {
-	    this.fun = fun;
-	    this.array = array;
-	}
-	Item.prototype.run = function () {
-	    this.fun.apply(null, this.array);
-	};
-	process.title = 'browser';
-	process.browser = true;
-	process.env = {};
-	process.argv = [];
-	process.version = ''; // empty string to avoid regexp issues
-	process.versions = {};
-
-	function noop() {}
-
-	process.on = noop;
-	process.addListener = noop;
-	process.once = noop;
-	process.off = noop;
-	process.removeListener = noop;
-	process.removeAllListeners = noop;
-	process.emit = noop;
-
-	process.binding = function (name) {
-	    throw new Error('process.binding is not supported');
-	};
-
-	process.cwd = function () { return '/' };
-	process.chdir = function (dir) {
-	    throw new Error('process.chdir is not supported');
-	};
-	process.umask = function() { return 0; };
-
-
-/***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	exports.__esModule = true;
-	exports.ActionTypes = undefined;
-	exports["default"] = createStore;
-
-	var _isPlainObject = __webpack_require__(8);
-
-	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-	/**
-	 * These are private action types reserved by Redux.
-	 * For any unknown actions, you must return the current state.
-	 * If the current state is undefined, you must return the initial state.
-	 * Do not reference these action types directly in your code.
-	 */
-	var ActionTypes = exports.ActionTypes = {
-	  INIT: '@@redux/INIT'
-	};
-
-	/**
-	 * Creates a Redux store that holds the state tree.
-	 * The only way to change the data in the store is to call `dispatch()` on it.
-	 *
-	 * There should only be a single store in your app. To specify how different
-	 * parts of the state tree respond to actions, you may combine several reducers
-	 * into a single reducer function by using `combineReducers`.
-	 *
-	 * @param {Function} reducer A function that returns the next state tree, given
-	 * the current state tree and the action to handle.
-	 *
-	 * @param {any} [initialState] The initial state. You may optionally specify it
-	 * to hydrate the state from the server in universal apps, or to restore a
-	 * previously serialized user session.
-	 * If you use `combineReducers` to produce the root reducer function, this must be
-	 * an object with the same shape as `combineReducers` keys.
-	 *
-	 * @param {Function} enhancer The store enhancer. You may optionally specify it
-	 * to enhance the store with third-party capabilities such as middleware,
-	 * time travel, persistence, etc. The only store enhancer that ships with Redux
-	 * is `applyMiddleware()`.
-	 *
-	 * @returns {Store} A Redux store that lets you read the state, dispatch actions
-	 * and subscribe to changes.
-	 */
-	function createStore(reducer, initialState, enhancer) {
-	  if (typeof initialState === 'function' && typeof enhancer === 'undefined') {
-	    enhancer = initialState;
-	    initialState = undefined;
-	  }
-
-	  if (typeof enhancer !== 'undefined') {
-	    if (typeof enhancer !== 'function') {
-	      throw new Error('Expected the enhancer to be a function.');
-	    }
-
-	    return enhancer(createStore)(reducer, initialState);
-	  }
-
-	  if (typeof reducer !== 'function') {
-	    throw new Error('Expected the reducer to be a function.');
-	  }
-
-	  var currentReducer = reducer;
-	  var currentState = initialState;
-	  var currentListeners = [];
-	  var nextListeners = currentListeners;
-	  var isDispatching = false;
-
-	  function ensureCanMutateNextListeners() {
-	    if (nextListeners === currentListeners) {
-	      nextListeners = currentListeners.slice();
-	    }
-	  }
-
-	  /**
-	   * Reads the state tree managed by the store.
-	   *
-	   * @returns {any} The current state tree of your application.
-	   */
-	  function getState() {
-	    return currentState;
-	  }
-
-	  /**
-	   * Adds a change listener. It will be called any time an action is dispatched,
-	   * and some part of the state tree may potentially have changed. You may then
-	   * call `getState()` to read the current state tree inside the callback.
-	   *
-	   * You may call `dispatch()` from a change listener, with the following
-	   * caveats:
-	   *
-	   * 1. The subscriptions are snapshotted just before every `dispatch()` call.
-	   * If you subscribe or unsubscribe while the listeners are being invoked, this
-	   * will not have any effect on the `dispatch()` that is currently in progress.
-	   * However, the next `dispatch()` call, whether nested or not, will use a more
-	   * recent snapshot of the subscription list.
-	   *
-	   * 2. The listener should not expect to see all states changes, as the state
-	   * might have been updated multiple times during a nested `dispatch()` before
-	   * the listener is called. It is, however, guaranteed that all subscribers
-	   * registered before the `dispatch()` started will be called with the latest
-	   * state by the time it exits.
-	   *
-	   * @param {Function} listener A callback to be invoked on every dispatch.
-	   * @returns {Function} A function to remove this change listener.
-	   */
-	  function subscribe(listener) {
-	    if (typeof listener !== 'function') {
-	      throw new Error('Expected listener to be a function.');
-	    }
-
-	    var isSubscribed = true;
-
-	    ensureCanMutateNextListeners();
-	    nextListeners.push(listener);
-
-	    return function unsubscribe() {
-	      if (!isSubscribed) {
-	        return;
-	      }
-
-	      isSubscribed = false;
-
-	      ensureCanMutateNextListeners();
-	      var index = nextListeners.indexOf(listener);
-	      nextListeners.splice(index, 1);
-	    };
-	  }
-
-	  /**
-	   * Dispatches an action. It is the only way to trigger a state change.
-	   *
-	   * The `reducer` function, used to create the store, will be called with the
-	   * current state tree and the given `action`. Its return value will
-	   * be considered the **next** state of the tree, and the change listeners
-	   * will be notified.
-	   *
-	   * The base implementation only supports plain object actions. If you want to
-	   * dispatch a Promise, an Observable, a thunk, or something else, you need to
-	   * wrap your store creating function into the corresponding middleware. For
-	   * example, see the documentation for the `redux-thunk` package. Even the
-	   * middleware will eventually dispatch plain object actions using this method.
-	   *
-	   * @param {Object} action A plain object representing “what changed”. It is
-	   * a good idea to keep actions serializable so you can record and replay user
-	   * sessions, or use the time travelling `redux-devtools`. An action must have
-	   * a `type` property which may not be `undefined`. It is a good idea to use
-	   * string constants for action types.
-	   *
-	   * @returns {Object} For convenience, the same action object you dispatched.
-	   *
-	   * Note that, if you use a custom middleware, it may wrap `dispatch()` to
-	   * return something else (for example, a Promise you can await).
-	   */
-	  function dispatch(action) {
-	    if (!(0, _isPlainObject2["default"])(action)) {
-	      throw new Error('Actions must be plain objects. ' + 'Use custom middleware for async actions.');
-	    }
-
-	    if (typeof action.type === 'undefined') {
-	      throw new Error('Actions may not have an undefined "type" property. ' + 'Have you misspelled a constant?');
-	    }
-
-	    if (isDispatching) {
-	      throw new Error('Reducers may not dispatch actions.');
-	    }
-
-	    try {
-	      isDispatching = true;
-	      currentState = currentReducer(currentState, action);
-	    } finally {
-	      isDispatching = false;
-	    }
-
-	    var listeners = currentListeners = nextListeners;
-	    for (var i = 0; i < listeners.length; i++) {
-	      listeners[i]();
-	    }
-
-	    return action;
-	  }
-
-	  /**
-	   * Replaces the reducer currently used by the store to calculate the state.
-	   *
-	   * You might need this if your app implements code splitting and you want to
-	   * load some of the reducers dynamically. You might also need this if you
-	   * implement a hot reloading mechanism for Redux.
-	   *
-	   * @param {Function} nextReducer The reducer for the store to use instead.
-	   * @returns {void}
-	   */
-	  function replaceReducer(nextReducer) {
-	    if (typeof nextReducer !== 'function') {
-	      throw new Error('Expected the nextReducer to be a function.');
-	    }
-
-	    currentReducer = nextReducer;
-	    dispatch({ type: ActionTypes.INIT });
-	  }
-
-	  // When a store is created, an "INIT" action is dispatched so that every
-	  // reducer returns their initial state. This effectively populates
-	  // the initial state tree.
-	  dispatch({ type: ActionTypes.INIT });
-
-	  return {
-	    dispatch: dispatch,
-	    subscribe: subscribe,
-	    getState: getState,
-	    replaceReducer: replaceReducer
-	  };
-	}
-
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isHostObject = __webpack_require__(9),
-	    isObjectLike = __webpack_require__(10);
-
-	/** `Object#toString` result references. */
-	var objectTag = '[object Object]';
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to resolve the decompiled source of functions. */
-	var funcToString = Function.prototype.toString;
-
-	/** Used to infer the `Object` constructor. */
-	var objectCtorString = funcToString.call(Object);
-
-	/**
-	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
-	 * of values.
-	 */
-	var objectToString = objectProto.toString;
-
-	/** Built-in value references. */
-	var getPrototypeOf = Object.getPrototypeOf;
-
-	/**
-	 * Checks if `value` is a plain object, that is, an object created by the
-	 * `Object` constructor or one with a `[[Prototype]]` of `null`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.a = 1;
-	 * }
-	 *
-	 * _.isPlainObject(new Foo);
-	 * // => false
-	 *
-	 * _.isPlainObject([1, 2, 3]);
-	 * // => false
-	 *
-	 * _.isPlainObject({ 'x': 0, 'y': 0 });
-	 * // => true
-	 *
-	 * _.isPlainObject(Object.create(null));
-	 * // => true
-	 */
-	function isPlainObject(value) {
-	  if (!isObjectLike(value) ||
-	      objectToString.call(value) != objectTag || isHostObject(value)) {
-	    return false;
-	  }
-	  var proto = objectProto;
-	  if (typeof value.constructor == 'function') {
-	    proto = getPrototypeOf(value);
-	  }
-	  if (proto === null) {
-	    return true;
-	  }
-	  var Ctor = proto.constructor;
-	  return (typeof Ctor == 'function' &&
-	    Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString);
-	}
-
-	module.exports = isPlainObject;
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if `value` is a host object in IE < 9.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
-	 */
-	function isHostObject(value) {
-	  // Many host objects are `Object` objects that can coerce to strings
-	  // despite having improperly defined `toString` methods.
-	  var result = false;
-	  if (value != null && typeof value.toString != 'function') {
-	    try {
-	      result = !!(value + '');
-	    } catch (e) {}
-	  }
-	  return result;
-	}
-
-	module.exports = isHostObject;
-
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if `value` is object-like. A value is object-like if it's not `null`
-	 * and has a `typeof` result of "object".
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
-	 * @example
-	 *
-	 * _.isObjectLike({});
-	 * // => true
-	 *
-	 * _.isObjectLike([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObjectLike(_.noop);
-	 * // => false
-	 *
-	 * _.isObjectLike(null);
-	 * // => false
-	 */
-	function isObjectLike(value) {
-	  return !!value && typeof value == 'object';
-	}
-
-	module.exports = isObjectLike;
-
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
-
-	exports.__esModule = true;
-	exports["default"] = combineReducers;
-
-	var _createStore = __webpack_require__(7);
-
-	var _isPlainObject = __webpack_require__(8);
-
-	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
-
-	var _warning = __webpack_require__(12);
-
-	var _warning2 = _interopRequireDefault(_warning);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-	function getUndefinedStateErrorMessage(key, action) {
-	  var actionType = action && action.type;
-	  var actionName = actionType && '"' + actionType.toString() + '"' || 'an action';
-
-	  return 'Reducer "' + key + '" returned undefined handling ' + actionName + '. ' + 'To ignore an action, you must explicitly return the previous state.';
-	}
-
-	function getUnexpectedStateShapeWarningMessage(inputState, reducers, action) {
-	  var reducerKeys = Object.keys(reducers);
-	  var argumentName = action && action.type === _createStore.ActionTypes.INIT ? 'initialState argument passed to createStore' : 'previous state received by the reducer';
-
-	  if (reducerKeys.length === 0) {
-	    return 'Store does not have a valid reducer. Make sure the argument passed ' + 'to combineReducers is an object whose values are reducers.';
-	  }
-
-	  if (!(0, _isPlainObject2["default"])(inputState)) {
-	    return 'The ' + argumentName + ' has unexpected type of "' + {}.toString.call(inputState).match(/\s([a-z|A-Z]+)/)[1] + '". Expected argument to be an object with the following ' + ('keys: "' + reducerKeys.join('", "') + '"');
-	  }
-
-	  var unexpectedKeys = Object.keys(inputState).filter(function (key) {
-	    return !reducers.hasOwnProperty(key);
-	  });
-
-	  if (unexpectedKeys.length > 0) {
-	    return 'Unexpected ' + (unexpectedKeys.length > 1 ? 'keys' : 'key') + ' ' + ('"' + unexpectedKeys.join('", "') + '" found in ' + argumentName + '. ') + 'Expected to find one of the known reducer keys instead: ' + ('"' + reducerKeys.join('", "') + '". Unexpected keys will be ignored.');
-	  }
-	}
-
-	function assertReducerSanity(reducers) {
-	  Object.keys(reducers).forEach(function (key) {
-	    var reducer = reducers[key];
-	    var initialState = reducer(undefined, { type: _createStore.ActionTypes.INIT });
-
-	    if (typeof initialState === 'undefined') {
-	      throw new Error('Reducer "' + key + '" returned undefined during initialization. ' + 'If the state passed to the reducer is undefined, you must ' + 'explicitly return the initial state. The initial state may ' + 'not be undefined.');
-	    }
-
-	    var type = '@@redux/PROBE_UNKNOWN_ACTION_' + Math.random().toString(36).substring(7).split('').join('.');
-	    if (typeof reducer(undefined, { type: type }) === 'undefined') {
-	      throw new Error('Reducer "' + key + '" returned undefined when probed with a random type. ' + ('Don\'t try to handle ' + _createStore.ActionTypes.INIT + ' or other actions in "redux/*" ') + 'namespace. They are considered private. Instead, you must return the ' + 'current state for any unknown actions, unless it is undefined, ' + 'in which case you must return the initial state, regardless of the ' + 'action type. The initial state may not be undefined.');
-	    }
-	  });
-	}
-
-	/**
-	 * Turns an object whose values are different reducer functions, into a single
-	 * reducer function. It will call every child reducer, and gather their results
-	 * into a single state object, whose keys correspond to the keys of the passed
-	 * reducer functions.
-	 *
-	 * @param {Object} reducers An object whose values correspond to different
-	 * reducer functions that need to be combined into one. One handy way to obtain
-	 * it is to use ES6 `import * as reducers` syntax. The reducers may never return
-	 * undefined for any action. Instead, they should return their initial state
-	 * if the state passed to them was undefined, and the current state for any
-	 * unrecognized action.
-	 *
-	 * @returns {Function} A reducer function that invokes every reducer inside the
-	 * passed object, and builds a state object with the same shape.
-	 */
-	function combineReducers(reducers) {
-	  var reducerKeys = Object.keys(reducers);
-	  var finalReducers = {};
-	  for (var i = 0; i < reducerKeys.length; i++) {
-	    var key = reducerKeys[i];
-	    if (typeof reducers[key] === 'function') {
-	      finalReducers[key] = reducers[key];
-	    }
-	  }
-	  var finalReducerKeys = Object.keys(finalReducers);
-
-	  var sanityError;
-	  try {
-	    assertReducerSanity(finalReducers);
-	  } catch (e) {
-	    sanityError = e;
-	  }
-
-	  return function combination() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-	    var action = arguments[1];
-
-	    if (sanityError) {
-	      throw sanityError;
-	    }
-
-	    if (process.env.NODE_ENV !== 'production') {
-	      var warningMessage = getUnexpectedStateShapeWarningMessage(state, finalReducers, action);
-	      if (warningMessage) {
-	        (0, _warning2["default"])(warningMessage);
-	      }
-	    }
-
-	    var hasChanged = false;
-	    var nextState = {};
-	    for (var i = 0; i < finalReducerKeys.length; i++) {
-	      var key = finalReducerKeys[i];
-	      var reducer = finalReducers[key];
-	      var previousStateForKey = state[key];
-	      var nextStateForKey = reducer(previousStateForKey, action);
-	      if (typeof nextStateForKey === 'undefined') {
-	        var errorMessage = getUndefinedStateErrorMessage(key, action);
-	        throw new Error(errorMessage);
-	      }
-	      nextState[key] = nextStateForKey;
-	      hasChanged = hasChanged || nextStateForKey !== previousStateForKey;
-	    }
-	    return hasChanged ? nextState : state;
-	  };
-	}
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
-
-/***/ },
-/* 12 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	exports.__esModule = true;
-	exports["default"] = warning;
-	/**
-	 * Prints a warning in the console if it exists.
-	 *
-	 * @param {String} message The warning message.
-	 * @returns {void}
-	 */
-	function warning(message) {
-	  /* eslint-disable no-console */
-	  if (typeof console !== 'undefined' && typeof console.error === 'function') {
-	    console.error(message);
-	  }
-	  /* eslint-enable no-console */
-	  try {
-	    // This error was thrown as a convenience so that you can use this stack
-	    // to find the callsite that caused this warning to fire.
-	    throw new Error(message);
-	    /* eslint-disable no-empty */
-	  } catch (e) {}
-	  /* eslint-enable no-empty */
-	}
-
-/***/ },
-/* 13 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	exports.__esModule = true;
-	exports["default"] = bindActionCreators;
-	function bindActionCreator(actionCreator, dispatch) {
-	  return function () {
-	    return dispatch(actionCreator.apply(undefined, arguments));
-	  };
-	}
-
-	/**
-	 * Turns an object whose values are action creators, into an object with the
-	 * same keys, but with every function wrapped into a `dispatch` call so they
-	 * may be invoked directly. This is just a convenience method, as you can call
-	 * `store.dispatch(MyActionCreators.doSomething())` yourself just fine.
-	 *
-	 * For convenience, you can also pass a single function as the first argument,
-	 * and get a function in return.
-	 *
-	 * @param {Function|Object} actionCreators An object whose values are action
-	 * creator functions. One handy way to obtain it is to use ES6 `import * as`
-	 * syntax. You may also pass a single function.
-	 *
-	 * @param {Function} dispatch The `dispatch` function available on your Redux
-	 * store.
-	 *
-	 * @returns {Function|Object} The object mimicking the original object, but with
-	 * every action creator wrapped into the `dispatch` call. If you passed a
-	 * function as `actionCreators`, the return value will also be a single
-	 * function.
-	 */
-	function bindActionCreators(actionCreators, dispatch) {
-	  if (typeof actionCreators === 'function') {
-	    return bindActionCreator(actionCreators, dispatch);
-	  }
-
-	  if (typeof actionCreators !== 'object' || actionCreators === null) {
-	    throw new Error('bindActionCreators expected an object or a function, instead received ' + (actionCreators === null ? 'null' : typeof actionCreators) + '. ' + 'Did you write "import ActionCreators from" instead of "import * as ActionCreators from"?');
-	  }
-
-	  var keys = Object.keys(actionCreators);
-	  var boundActionCreators = {};
-	  for (var i = 0; i < keys.length; i++) {
-	    var key = keys[i];
-	    var actionCreator = actionCreators[key];
-	    if (typeof actionCreator === 'function') {
-	      boundActionCreators[key] = bindActionCreator(actionCreator, dispatch);
-	    }
-	  }
-	  return boundActionCreators;
-	}
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	exports.__esModule = true;
-	exports["default"] = applyMiddleware;
-
-	var _compose = __webpack_require__(15);
-
-	var _compose2 = _interopRequireDefault(_compose);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-	/**
-	 * Creates a store enhancer that applies middleware to the dispatch method
-	 * of the Redux store. This is handy for a variety of tasks, such as expressing
-	 * asynchronous actions in a concise manner, or logging every action payload.
-	 *
-	 * See `redux-thunk` package as an example of the Redux middleware.
-	 *
-	 * Because middleware is potentially asynchronous, this should be the first
-	 * store enhancer in the composition chain.
-	 *
-	 * Note that each middleware will be given the `dispatch` and `getState` functions
-	 * as named arguments.
-	 *
-	 * @param {...Function} middlewares The middleware chain to be applied.
-	 * @returns {Function} A store enhancer applying the middleware.
-	 */
-	function applyMiddleware() {
-	  for (var _len = arguments.length, middlewares = Array(_len), _key = 0; _key < _len; _key++) {
-	    middlewares[_key] = arguments[_key];
-	  }
-
-	  return function (createStore) {
-	    return function (reducer, initialState, enhancer) {
-	      var store = createStore(reducer, initialState, enhancer);
-	      var _dispatch = store.dispatch;
-	      var chain = [];
-
-	      var middlewareAPI = {
-	        getState: store.getState,
-	        dispatch: function dispatch(action) {
-	          return _dispatch(action);
-	        }
-	      };
-	      chain = middlewares.map(function (middleware) {
-	        return middleware(middlewareAPI);
-	      });
-	      _dispatch = _compose2["default"].apply(undefined, chain)(store.dispatch);
-
-	      return _extends({}, store, {
-	        dispatch: _dispatch
-	      });
-	    };
-	  };
-	}
-
-/***/ },
-/* 15 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	exports.__esModule = true;
-	exports["default"] = compose;
-	/**
-	 * Composes single-argument functions from right to left.
-	 *
-	 * @param {...Function} funcs The functions to compose.
-	 * @returns {Function} A function obtained by composing functions from right to
-	 * left. For example, compose(f, g, h) is identical to arg => f(g(h(arg))).
-	 */
-	function compose() {
-	  for (var _len = arguments.length, funcs = Array(_len), _key = 0; _key < _len; _key++) {
-	    funcs[_key] = arguments[_key];
-	  }
-
-	  return function () {
-	    if (funcs.length === 0) {
-	      return arguments.length <= 0 ? undefined : arguments[0];
-	    }
-
-	    var last = funcs[funcs.length - 1];
-	    var rest = funcs.slice(0, -1);
-
-	    return rest.reduceRight(function (composed, f) {
-	      return f(composed);
-	    }, last.apply(undefined, arguments));
-	  };
-	}
-
-/***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
-	var _ = __webpack_require__(17);
-	var Controller = __webpack_require__(19);
-	var initState = __webpack_require__(23);
-	var gameModes = __webpack_require__(24);
-
-	var GameController = new Controller();
-
-	GameController.add('INITIALIZE', function (state, action) {
-	  var savedState = this.getSavedState();
-
-	  if (savedState) {
-	    state = savedState;
-	  } else {
-	    state = initState;
-	    state.gameModes = gameModes;
-	    state.page = { active: 'game' };
-
-	    state = this.dispatch(state, { type: 'START_GAME' });
-	  }
-
-	  return state;
-	});
-
-	GameController.add('START_GAME', function (state, action) {
-	  var _this = this;
-
-	  var mode = filterAndPick(state.gameModes, { 'active': true });
-	  if (mode) {
-	    var _ret = function () {
-	      var activeWords = _.filter(state.words, { 'active': true });
-	      var words = [];
-
-	      _.forEach(mode.picks, function (val) {
-	        var pick = filterAndPick(activeWords, val);
-	        if (pick) {
-	          pick.id = words.length + 1;
-	          words.push(pick);
-	        }
-	      });
-
-	      if (words.length > 0) {
-
-	        state.game = Object.assign({}, state.game, {
-	          words: words,
-	          mode: mode
-	        });
-
-	        return {
-	          v: _this.saveState(state)
-	        };
-	      }
-	    }();
-
-	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
-	  }
-
-	  state.game = {
-	    error: 'No words.'
-	  };
-	  return state;
-	});
-
-	GameController.add('SET_ANSWER', function (state, action) {
-	  var idx = action.id;
-	  state.game.mode.comparators[idx] = Object.assign({}, state.game.mode.comparators[idx], { answer: action.answer });
-
-	  saveGameState(state);
-	  return state;
-	});
-
-	GameController.add('CHECK_ANSWER', function (state, action) {
-	  console.log('Checking Answer', action);
-	  state.game.mode.comparators.forEach(function (val) {
-	    console.log(val);
-	    var id = val.wordId || 1;
-
-	    if (val.active && val.answer.length) {
-	      val.correct = checkAnswer(_.find(state.game.words, { id: id }), val.answer, val.selector);
-	    } else {
-	      val.correct = null;
-	    }
-	  });
-	  return state;
-	});
-
-	function filterAndPick(arr, filter) {
-	  var filtered = _.filter(arr, filter);
-	  var item = _.sample(filtered);
-	  return item;
-	}
-
-	function checkAnswer(word, answer, selector) {
-	  console.log(word, answer, _.get(word, selector) === answer);
-	  return _.get(word, selector) === answer;
-	}
-
-	module.exports = GameController;
-
-/***/ },
-/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
@@ -25713,10 +24746,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)(module), (function() { return this; }())))
 
 /***/ },
-/* 18 */
+/* 5 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -25732,6 +24765,962 @@
 
 
 /***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var redux = __webpack_require__(7);
+	var GameCtrl = __webpack_require__(18);
+	var SettingsCtrl = __webpack_require__(25);
+
+	function counter() {
+	  var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	  var action = arguments[1];
+
+
+	  if (GameCtrl.belongs(action.type)) {
+	    return GameCtrl.reducer(state, action);
+	  }
+
+	  if (SettingsCtrl.belongs(action.type)) {
+	    return SettingsCtrl.reducer(state, action);
+	  }
+
+	  return state;
+	}
+
+	var store = (window.devToolsExtension ? window.devToolsExtension()(redux.createStore) : redux.createStore)(counter, {});
+
+	module.exports = {
+	  store: store
+	};
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+
+	exports.__esModule = true;
+	exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
+
+	var _createStore = __webpack_require__(9);
+
+	var _createStore2 = _interopRequireDefault(_createStore);
+
+	var _combineReducers = __webpack_require__(13);
+
+	var _combineReducers2 = _interopRequireDefault(_combineReducers);
+
+	var _bindActionCreators = __webpack_require__(15);
+
+	var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
+
+	var _applyMiddleware = __webpack_require__(16);
+
+	var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
+
+	var _compose = __webpack_require__(17);
+
+	var _compose2 = _interopRequireDefault(_compose);
+
+	var _warning = __webpack_require__(14);
+
+	var _warning2 = _interopRequireDefault(_warning);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+	/*
+	* This is a dummy function to check if the function name has been altered by minification.
+	* If the function has been minified and NODE_ENV !== 'production', warn the user.
+	*/
+	function isCrushed() {}
+
+	if (process.env.NODE_ENV !== 'production' && typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') {
+	  (0, _warning2["default"])('You are currently using minified code outside of NODE_ENV === \'production\'. ' + 'This means that you are running a slower development build of Redux. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) ' + 'to ensure you have the correct code for your production build.');
+	}
+
+	exports.createStore = _createStore2["default"];
+	exports.combineReducers = _combineReducers2["default"];
+	exports.bindActionCreators = _bindActionCreators2["default"];
+	exports.applyMiddleware = _applyMiddleware2["default"];
+	exports.compose = _compose2["default"];
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	// shim for using process in browser
+
+	var process = module.exports = {};
+	var queue = [];
+	var draining = false;
+	var currentQueue;
+	var queueIndex = -1;
+
+	function cleanUpNextTick() {
+	    draining = false;
+	    if (currentQueue.length) {
+	        queue = currentQueue.concat(queue);
+	    } else {
+	        queueIndex = -1;
+	    }
+	    if (queue.length) {
+	        drainQueue();
+	    }
+	}
+
+	function drainQueue() {
+	    if (draining) {
+	        return;
+	    }
+	    var timeout = setTimeout(cleanUpNextTick);
+	    draining = true;
+
+	    var len = queue.length;
+	    while(len) {
+	        currentQueue = queue;
+	        queue = [];
+	        while (++queueIndex < len) {
+	            if (currentQueue) {
+	                currentQueue[queueIndex].run();
+	            }
+	        }
+	        queueIndex = -1;
+	        len = queue.length;
+	    }
+	    currentQueue = null;
+	    draining = false;
+	    clearTimeout(timeout);
+	}
+
+	process.nextTick = function (fun) {
+	    var args = new Array(arguments.length - 1);
+	    if (arguments.length > 1) {
+	        for (var i = 1; i < arguments.length; i++) {
+	            args[i - 1] = arguments[i];
+	        }
+	    }
+	    queue.push(new Item(fun, args));
+	    if (queue.length === 1 && !draining) {
+	        setTimeout(drainQueue, 0);
+	    }
+	};
+
+	// v8 likes predictible objects
+	function Item(fun, array) {
+	    this.fun = fun;
+	    this.array = array;
+	}
+	Item.prototype.run = function () {
+	    this.fun.apply(null, this.array);
+	};
+	process.title = 'browser';
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+	process.version = ''; // empty string to avoid regexp issues
+	process.versions = {};
+
+	function noop() {}
+
+	process.on = noop;
+	process.addListener = noop;
+	process.once = noop;
+	process.off = noop;
+	process.removeListener = noop;
+	process.removeAllListeners = noop;
+	process.emit = noop;
+
+	process.binding = function (name) {
+	    throw new Error('process.binding is not supported');
+	};
+
+	process.cwd = function () { return '/' };
+	process.chdir = function (dir) {
+	    throw new Error('process.chdir is not supported');
+	};
+	process.umask = function() { return 0; };
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports.ActionTypes = undefined;
+	exports["default"] = createStore;
+
+	var _isPlainObject = __webpack_require__(10);
+
+	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+	/**
+	 * These are private action types reserved by Redux.
+	 * For any unknown actions, you must return the current state.
+	 * If the current state is undefined, you must return the initial state.
+	 * Do not reference these action types directly in your code.
+	 */
+	var ActionTypes = exports.ActionTypes = {
+	  INIT: '@@redux/INIT'
+	};
+
+	/**
+	 * Creates a Redux store that holds the state tree.
+	 * The only way to change the data in the store is to call `dispatch()` on it.
+	 *
+	 * There should only be a single store in your app. To specify how different
+	 * parts of the state tree respond to actions, you may combine several reducers
+	 * into a single reducer function by using `combineReducers`.
+	 *
+	 * @param {Function} reducer A function that returns the next state tree, given
+	 * the current state tree and the action to handle.
+	 *
+	 * @param {any} [initialState] The initial state. You may optionally specify it
+	 * to hydrate the state from the server in universal apps, or to restore a
+	 * previously serialized user session.
+	 * If you use `combineReducers` to produce the root reducer function, this must be
+	 * an object with the same shape as `combineReducers` keys.
+	 *
+	 * @param {Function} enhancer The store enhancer. You may optionally specify it
+	 * to enhance the store with third-party capabilities such as middleware,
+	 * time travel, persistence, etc. The only store enhancer that ships with Redux
+	 * is `applyMiddleware()`.
+	 *
+	 * @returns {Store} A Redux store that lets you read the state, dispatch actions
+	 * and subscribe to changes.
+	 */
+	function createStore(reducer, initialState, enhancer) {
+	  if (typeof initialState === 'function' && typeof enhancer === 'undefined') {
+	    enhancer = initialState;
+	    initialState = undefined;
+	  }
+
+	  if (typeof enhancer !== 'undefined') {
+	    if (typeof enhancer !== 'function') {
+	      throw new Error('Expected the enhancer to be a function.');
+	    }
+
+	    return enhancer(createStore)(reducer, initialState);
+	  }
+
+	  if (typeof reducer !== 'function') {
+	    throw new Error('Expected the reducer to be a function.');
+	  }
+
+	  var currentReducer = reducer;
+	  var currentState = initialState;
+	  var currentListeners = [];
+	  var nextListeners = currentListeners;
+	  var isDispatching = false;
+
+	  function ensureCanMutateNextListeners() {
+	    if (nextListeners === currentListeners) {
+	      nextListeners = currentListeners.slice();
+	    }
+	  }
+
+	  /**
+	   * Reads the state tree managed by the store.
+	   *
+	   * @returns {any} The current state tree of your application.
+	   */
+	  function getState() {
+	    return currentState;
+	  }
+
+	  /**
+	   * Adds a change listener. It will be called any time an action is dispatched,
+	   * and some part of the state tree may potentially have changed. You may then
+	   * call `getState()` to read the current state tree inside the callback.
+	   *
+	   * You may call `dispatch()` from a change listener, with the following
+	   * caveats:
+	   *
+	   * 1. The subscriptions are snapshotted just before every `dispatch()` call.
+	   * If you subscribe or unsubscribe while the listeners are being invoked, this
+	   * will not have any effect on the `dispatch()` that is currently in progress.
+	   * However, the next `dispatch()` call, whether nested or not, will use a more
+	   * recent snapshot of the subscription list.
+	   *
+	   * 2. The listener should not expect to see all states changes, as the state
+	   * might have been updated multiple times during a nested `dispatch()` before
+	   * the listener is called. It is, however, guaranteed that all subscribers
+	   * registered before the `dispatch()` started will be called with the latest
+	   * state by the time it exits.
+	   *
+	   * @param {Function} listener A callback to be invoked on every dispatch.
+	   * @returns {Function} A function to remove this change listener.
+	   */
+	  function subscribe(listener) {
+	    if (typeof listener !== 'function') {
+	      throw new Error('Expected listener to be a function.');
+	    }
+
+	    var isSubscribed = true;
+
+	    ensureCanMutateNextListeners();
+	    nextListeners.push(listener);
+
+	    return function unsubscribe() {
+	      if (!isSubscribed) {
+	        return;
+	      }
+
+	      isSubscribed = false;
+
+	      ensureCanMutateNextListeners();
+	      var index = nextListeners.indexOf(listener);
+	      nextListeners.splice(index, 1);
+	    };
+	  }
+
+	  /**
+	   * Dispatches an action. It is the only way to trigger a state change.
+	   *
+	   * The `reducer` function, used to create the store, will be called with the
+	   * current state tree and the given `action`. Its return value will
+	   * be considered the **next** state of the tree, and the change listeners
+	   * will be notified.
+	   *
+	   * The base implementation only supports plain object actions. If you want to
+	   * dispatch a Promise, an Observable, a thunk, or something else, you need to
+	   * wrap your store creating function into the corresponding middleware. For
+	   * example, see the documentation for the `redux-thunk` package. Even the
+	   * middleware will eventually dispatch plain object actions using this method.
+	   *
+	   * @param {Object} action A plain object representing “what changed”. It is
+	   * a good idea to keep actions serializable so you can record and replay user
+	   * sessions, or use the time travelling `redux-devtools`. An action must have
+	   * a `type` property which may not be `undefined`. It is a good idea to use
+	   * string constants for action types.
+	   *
+	   * @returns {Object} For convenience, the same action object you dispatched.
+	   *
+	   * Note that, if you use a custom middleware, it may wrap `dispatch()` to
+	   * return something else (for example, a Promise you can await).
+	   */
+	  function dispatch(action) {
+	    if (!(0, _isPlainObject2["default"])(action)) {
+	      throw new Error('Actions must be plain objects. ' + 'Use custom middleware for async actions.');
+	    }
+
+	    if (typeof action.type === 'undefined') {
+	      throw new Error('Actions may not have an undefined "type" property. ' + 'Have you misspelled a constant?');
+	    }
+
+	    if (isDispatching) {
+	      throw new Error('Reducers may not dispatch actions.');
+	    }
+
+	    try {
+	      isDispatching = true;
+	      currentState = currentReducer(currentState, action);
+	    } finally {
+	      isDispatching = false;
+	    }
+
+	    var listeners = currentListeners = nextListeners;
+	    for (var i = 0; i < listeners.length; i++) {
+	      listeners[i]();
+	    }
+
+	    return action;
+	  }
+
+	  /**
+	   * Replaces the reducer currently used by the store to calculate the state.
+	   *
+	   * You might need this if your app implements code splitting and you want to
+	   * load some of the reducers dynamically. You might also need this if you
+	   * implement a hot reloading mechanism for Redux.
+	   *
+	   * @param {Function} nextReducer The reducer for the store to use instead.
+	   * @returns {void}
+	   */
+	  function replaceReducer(nextReducer) {
+	    if (typeof nextReducer !== 'function') {
+	      throw new Error('Expected the nextReducer to be a function.');
+	    }
+
+	    currentReducer = nextReducer;
+	    dispatch({ type: ActionTypes.INIT });
+	  }
+
+	  // When a store is created, an "INIT" action is dispatched so that every
+	  // reducer returns their initial state. This effectively populates
+	  // the initial state tree.
+	  dispatch({ type: ActionTypes.INIT });
+
+	  return {
+	    dispatch: dispatch,
+	    subscribe: subscribe,
+	    getState: getState,
+	    replaceReducer: replaceReducer
+	  };
+	}
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isHostObject = __webpack_require__(11),
+	    isObjectLike = __webpack_require__(12);
+
+	/** `Object#toString` result references. */
+	var objectTag = '[object Object]';
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to resolve the decompiled source of functions. */
+	var funcToString = Function.prototype.toString;
+
+	/** Used to infer the `Object` constructor. */
+	var objectCtorString = funcToString.call(Object);
+
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objectToString = objectProto.toString;
+
+	/** Built-in value references. */
+	var getPrototypeOf = Object.getPrototypeOf;
+
+	/**
+	 * Checks if `value` is a plain object, that is, an object created by the
+	 * `Object` constructor or one with a `[[Prototype]]` of `null`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 * }
+	 *
+	 * _.isPlainObject(new Foo);
+	 * // => false
+	 *
+	 * _.isPlainObject([1, 2, 3]);
+	 * // => false
+	 *
+	 * _.isPlainObject({ 'x': 0, 'y': 0 });
+	 * // => true
+	 *
+	 * _.isPlainObject(Object.create(null));
+	 * // => true
+	 */
+	function isPlainObject(value) {
+	  if (!isObjectLike(value) ||
+	      objectToString.call(value) != objectTag || isHostObject(value)) {
+	    return false;
+	  }
+	  var proto = objectProto;
+	  if (typeof value.constructor == 'function') {
+	    proto = getPrototypeOf(value);
+	  }
+	  if (proto === null) {
+	    return true;
+	  }
+	  var Ctor = proto.constructor;
+	  return (typeof Ctor == 'function' &&
+	    Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString);
+	}
+
+	module.exports = isPlainObject;
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is a host object in IE < 9.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
+	 */
+	function isHostObject(value) {
+	  // Many host objects are `Object` objects that can coerce to strings
+	  // despite having improperly defined `toString` methods.
+	  var result = false;
+	  if (value != null && typeof value.toString != 'function') {
+	    try {
+	      result = !!(value + '');
+	    } catch (e) {}
+	  }
+	  return result;
+	}
+
+	module.exports = isHostObject;
+
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 * @example
+	 *
+	 * _.isObjectLike({});
+	 * // => true
+	 *
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
+	 * // => false
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+
+	module.exports = isObjectLike;
+
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+
+	exports.__esModule = true;
+	exports["default"] = combineReducers;
+
+	var _createStore = __webpack_require__(9);
+
+	var _isPlainObject = __webpack_require__(10);
+
+	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
+
+	var _warning = __webpack_require__(14);
+
+	var _warning2 = _interopRequireDefault(_warning);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+	function getUndefinedStateErrorMessage(key, action) {
+	  var actionType = action && action.type;
+	  var actionName = actionType && '"' + actionType.toString() + '"' || 'an action';
+
+	  return 'Reducer "' + key + '" returned undefined handling ' + actionName + '. ' + 'To ignore an action, you must explicitly return the previous state.';
+	}
+
+	function getUnexpectedStateShapeWarningMessage(inputState, reducers, action) {
+	  var reducerKeys = Object.keys(reducers);
+	  var argumentName = action && action.type === _createStore.ActionTypes.INIT ? 'initialState argument passed to createStore' : 'previous state received by the reducer';
+
+	  if (reducerKeys.length === 0) {
+	    return 'Store does not have a valid reducer. Make sure the argument passed ' + 'to combineReducers is an object whose values are reducers.';
+	  }
+
+	  if (!(0, _isPlainObject2["default"])(inputState)) {
+	    return 'The ' + argumentName + ' has unexpected type of "' + {}.toString.call(inputState).match(/\s([a-z|A-Z]+)/)[1] + '". Expected argument to be an object with the following ' + ('keys: "' + reducerKeys.join('", "') + '"');
+	  }
+
+	  var unexpectedKeys = Object.keys(inputState).filter(function (key) {
+	    return !reducers.hasOwnProperty(key);
+	  });
+
+	  if (unexpectedKeys.length > 0) {
+	    return 'Unexpected ' + (unexpectedKeys.length > 1 ? 'keys' : 'key') + ' ' + ('"' + unexpectedKeys.join('", "') + '" found in ' + argumentName + '. ') + 'Expected to find one of the known reducer keys instead: ' + ('"' + reducerKeys.join('", "') + '". Unexpected keys will be ignored.');
+	  }
+	}
+
+	function assertReducerSanity(reducers) {
+	  Object.keys(reducers).forEach(function (key) {
+	    var reducer = reducers[key];
+	    var initialState = reducer(undefined, { type: _createStore.ActionTypes.INIT });
+
+	    if (typeof initialState === 'undefined') {
+	      throw new Error('Reducer "' + key + '" returned undefined during initialization. ' + 'If the state passed to the reducer is undefined, you must ' + 'explicitly return the initial state. The initial state may ' + 'not be undefined.');
+	    }
+
+	    var type = '@@redux/PROBE_UNKNOWN_ACTION_' + Math.random().toString(36).substring(7).split('').join('.');
+	    if (typeof reducer(undefined, { type: type }) === 'undefined') {
+	      throw new Error('Reducer "' + key + '" returned undefined when probed with a random type. ' + ('Don\'t try to handle ' + _createStore.ActionTypes.INIT + ' or other actions in "redux/*" ') + 'namespace. They are considered private. Instead, you must return the ' + 'current state for any unknown actions, unless it is undefined, ' + 'in which case you must return the initial state, regardless of the ' + 'action type. The initial state may not be undefined.');
+	    }
+	  });
+	}
+
+	/**
+	 * Turns an object whose values are different reducer functions, into a single
+	 * reducer function. It will call every child reducer, and gather their results
+	 * into a single state object, whose keys correspond to the keys of the passed
+	 * reducer functions.
+	 *
+	 * @param {Object} reducers An object whose values correspond to different
+	 * reducer functions that need to be combined into one. One handy way to obtain
+	 * it is to use ES6 `import * as reducers` syntax. The reducers may never return
+	 * undefined for any action. Instead, they should return their initial state
+	 * if the state passed to them was undefined, and the current state for any
+	 * unrecognized action.
+	 *
+	 * @returns {Function} A reducer function that invokes every reducer inside the
+	 * passed object, and builds a state object with the same shape.
+	 */
+	function combineReducers(reducers) {
+	  var reducerKeys = Object.keys(reducers);
+	  var finalReducers = {};
+	  for (var i = 0; i < reducerKeys.length; i++) {
+	    var key = reducerKeys[i];
+	    if (typeof reducers[key] === 'function') {
+	      finalReducers[key] = reducers[key];
+	    }
+	  }
+	  var finalReducerKeys = Object.keys(finalReducers);
+
+	  var sanityError;
+	  try {
+	    assertReducerSanity(finalReducers);
+	  } catch (e) {
+	    sanityError = e;
+	  }
+
+	  return function combination() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	    var action = arguments[1];
+
+	    if (sanityError) {
+	      throw sanityError;
+	    }
+
+	    if (process.env.NODE_ENV !== 'production') {
+	      var warningMessage = getUnexpectedStateShapeWarningMessage(state, finalReducers, action);
+	      if (warningMessage) {
+	        (0, _warning2["default"])(warningMessage);
+	      }
+	    }
+
+	    var hasChanged = false;
+	    var nextState = {};
+	    for (var i = 0; i < finalReducerKeys.length; i++) {
+	      var key = finalReducerKeys[i];
+	      var reducer = finalReducers[key];
+	      var previousStateForKey = state[key];
+	      var nextStateForKey = reducer(previousStateForKey, action);
+	      if (typeof nextStateForKey === 'undefined') {
+	        var errorMessage = getUndefinedStateErrorMessage(key, action);
+	        throw new Error(errorMessage);
+	      }
+	      nextState[key] = nextStateForKey;
+	      hasChanged = hasChanged || nextStateForKey !== previousStateForKey;
+	    }
+	    return hasChanged ? nextState : state;
+	  };
+	}
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports["default"] = warning;
+	/**
+	 * Prints a warning in the console if it exists.
+	 *
+	 * @param {String} message The warning message.
+	 * @returns {void}
+	 */
+	function warning(message) {
+	  /* eslint-disable no-console */
+	  if (typeof console !== 'undefined' && typeof console.error === 'function') {
+	    console.error(message);
+	  }
+	  /* eslint-enable no-console */
+	  try {
+	    // This error was thrown as a convenience so that you can use this stack
+	    // to find the callsite that caused this warning to fire.
+	    throw new Error(message);
+	    /* eslint-disable no-empty */
+	  } catch (e) {}
+	  /* eslint-enable no-empty */
+	}
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports["default"] = bindActionCreators;
+	function bindActionCreator(actionCreator, dispatch) {
+	  return function () {
+	    return dispatch(actionCreator.apply(undefined, arguments));
+	  };
+	}
+
+	/**
+	 * Turns an object whose values are action creators, into an object with the
+	 * same keys, but with every function wrapped into a `dispatch` call so they
+	 * may be invoked directly. This is just a convenience method, as you can call
+	 * `store.dispatch(MyActionCreators.doSomething())` yourself just fine.
+	 *
+	 * For convenience, you can also pass a single function as the first argument,
+	 * and get a function in return.
+	 *
+	 * @param {Function|Object} actionCreators An object whose values are action
+	 * creator functions. One handy way to obtain it is to use ES6 `import * as`
+	 * syntax. You may also pass a single function.
+	 *
+	 * @param {Function} dispatch The `dispatch` function available on your Redux
+	 * store.
+	 *
+	 * @returns {Function|Object} The object mimicking the original object, but with
+	 * every action creator wrapped into the `dispatch` call. If you passed a
+	 * function as `actionCreators`, the return value will also be a single
+	 * function.
+	 */
+	function bindActionCreators(actionCreators, dispatch) {
+	  if (typeof actionCreators === 'function') {
+	    return bindActionCreator(actionCreators, dispatch);
+	  }
+
+	  if (typeof actionCreators !== 'object' || actionCreators === null) {
+	    throw new Error('bindActionCreators expected an object or a function, instead received ' + (actionCreators === null ? 'null' : typeof actionCreators) + '. ' + 'Did you write "import ActionCreators from" instead of "import * as ActionCreators from"?');
+	  }
+
+	  var keys = Object.keys(actionCreators);
+	  var boundActionCreators = {};
+	  for (var i = 0; i < keys.length; i++) {
+	    var key = keys[i];
+	    var actionCreator = actionCreators[key];
+	    if (typeof actionCreator === 'function') {
+	      boundActionCreators[key] = bindActionCreator(actionCreator, dispatch);
+	    }
+	  }
+	  return boundActionCreators;
+	}
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	exports.__esModule = true;
+	exports["default"] = applyMiddleware;
+
+	var _compose = __webpack_require__(17);
+
+	var _compose2 = _interopRequireDefault(_compose);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+	/**
+	 * Creates a store enhancer that applies middleware to the dispatch method
+	 * of the Redux store. This is handy for a variety of tasks, such as expressing
+	 * asynchronous actions in a concise manner, or logging every action payload.
+	 *
+	 * See `redux-thunk` package as an example of the Redux middleware.
+	 *
+	 * Because middleware is potentially asynchronous, this should be the first
+	 * store enhancer in the composition chain.
+	 *
+	 * Note that each middleware will be given the `dispatch` and `getState` functions
+	 * as named arguments.
+	 *
+	 * @param {...Function} middlewares The middleware chain to be applied.
+	 * @returns {Function} A store enhancer applying the middleware.
+	 */
+	function applyMiddleware() {
+	  for (var _len = arguments.length, middlewares = Array(_len), _key = 0; _key < _len; _key++) {
+	    middlewares[_key] = arguments[_key];
+	  }
+
+	  return function (createStore) {
+	    return function (reducer, initialState, enhancer) {
+	      var store = createStore(reducer, initialState, enhancer);
+	      var _dispatch = store.dispatch;
+	      var chain = [];
+
+	      var middlewareAPI = {
+	        getState: store.getState,
+	        dispatch: function dispatch(action) {
+	          return _dispatch(action);
+	        }
+	      };
+	      chain = middlewares.map(function (middleware) {
+	        return middleware(middlewareAPI);
+	      });
+	      _dispatch = _compose2["default"].apply(undefined, chain)(store.dispatch);
+
+	      return _extends({}, store, {
+	        dispatch: _dispatch
+	      });
+	    };
+	  };
+	}
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	exports.__esModule = true;
+	exports["default"] = compose;
+	/**
+	 * Composes single-argument functions from right to left.
+	 *
+	 * @param {...Function} funcs The functions to compose.
+	 * @returns {Function} A function obtained by composing functions from right to
+	 * left. For example, compose(f, g, h) is identical to arg => f(g(h(arg))).
+	 */
+	function compose() {
+	  for (var _len = arguments.length, funcs = Array(_len), _key = 0; _key < _len; _key++) {
+	    funcs[_key] = arguments[_key];
+	  }
+
+	  return function () {
+	    if (funcs.length === 0) {
+	      return arguments.length <= 0 ? undefined : arguments[0];
+	    }
+
+	    var last = funcs[funcs.length - 1];
+	    var rest = funcs.slice(0, -1);
+
+	    return rest.reduceRight(function (composed, f) {
+	      return f(composed);
+	    }, last.apply(undefined, arguments));
+	  };
+	}
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+	var Controller = __webpack_require__(19);
+	var initState = __webpack_require__(23);
+	var gameModes = __webpack_require__(24);
+
+	var GameController = new Controller();
+
+	GameController.add('INITIALIZE', function (state, action) {
+	  var savedState = this.getSavedState();
+
+	  if (savedState) {
+	    state = savedState;
+	  } else {
+	    state = initState;
+	    state.gameModes = gameModes;
+	    state.page = { active: 'game' };
+	  }
+
+	  if (state.page.active === 'game') state = this.dispatch(state, { type: 'START_GAME' });
+
+	  return state;
+	});
+
+	GameController.add('START_GAME', function (state, action) {
+
+	  if (state.game.error) state.game.error = null;
+
+	  var mode = filterAndPick(state.gameModes, { 'active': true });
+	  if (mode) {
+	    var _ret = function () {
+	      var activeWords = _.filter(state.words, { 'active': true });
+	      var words = [];
+
+	      _.forEach(mode.picks, function (val) {
+	        var pick = filterAndPick(activeWords, val);
+	        if (pick) {
+	          pick.id = words.length + 1;
+	          words.push(pick);
+	        }
+	      });
+
+	      if (words.length > 0) {
+
+	        state.game = Object.assign({}, state.game, {
+	          words: _.clone(words),
+	          mode: _.clone(mode)
+	        });
+
+	        return {
+	          v: state
+	        };
+	      }
+	    }();
+
+	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	  }
+
+	  state.game = {
+	    error: 'No words.'
+	  };
+	  return state;
+	});
+
+	GameController.add('SET_ANSWER', function (state, action) {
+	  var idx = action.id;
+	  state.game.mode.comparators[idx] = Object.assign({}, state.game.mode.comparators[idx], { answer: action.answer });
+
+	  return state;
+	});
+
+	GameController.add('CHECK_ANSWER', function (state, action) {
+	  console.log('Checking Answer', action);
+	  state.game.mode.comparators.forEach(function (val) {
+	    console.log(val);
+	    var id = val.wordId || 1;
+
+	    if (val.active && val.answer.length) {
+	      val.correct = checkAnswer(_.find(state.game.words, { id: id }), val.answer, val.selector);
+	    } else {
+	      val.correct = null;
+	    }
+	  });
+	  return state;
+	});
+
+	function filterAndPick(arr, filter) {
+	  var filtered = _.filter(arr, filter);
+	  var item = _.sample(filtered);
+	  return item;
+	}
+
+	function checkAnswer(word, answer, selector) {
+	  console.log(word, answer, _.get(word, selector) === answer);
+	  return _.get(word, selector) === answer;
+	}
+
+	module.exports = GameController;
+
+/***/ },
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -25741,7 +25730,6 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var _ = __webpack_require__(17);
 	var ls = __webpack_require__(20);
 
 	var Controller = function () {
@@ -25954,22 +25942,7 @@
 
 	"use strict";
 
-	var words = [{
-	  type: 'noun',
-	  "word": "boală",
-	  "indefinite": {
-	    "word": "boală",
-	    "plural": "boli"
-	  },
-	  "definite": {
-	    "word": "boala",
-	    "plural": "bolile"
-	  },
-	  number: 'singular',
-	  "translation": "illness",
-	  "gender": "feminine",
-	  active: true
-	}];
+	var words = [];
 
 	module.exports = {
 	  words: words
@@ -26061,7 +26034,6 @@
 
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-	var _ = __webpack_require__(17);
 	var Controller = __webpack_require__(19);
 	var md5 = __webpack_require__(26);
 
@@ -26069,12 +26041,21 @@
 
 	SettingsController.add('ADD_WORD', function (state, action) {
 
-	  action.word.translation = action.word.eng;
+	  state.page.settings = Object.assign({}, state.page.settings, {
+	    'wordAddModal': {
+	      active: true
+	    }
+	  });
+
+	  return this.saveState(state);
+	});
+
+	SettingsController.add('SAVE_WORD', function (state, action) {
+
 	  action.word.id = md5(action.word.translation);
 
 	  if (!_.find(state.words, { id: action.word.id }) && action.word.word) {
 	    action.word.active = true;
-	    action.word.type = 'noun';
 
 	    var words = state.words.concat([action.word]);
 
@@ -26083,26 +26064,37 @@
 	    });
 	  }
 
+	  state = this.dispatch(state, { type: 'CLOSE_WORD_MODALS' });
 	  return this.saveState(state);
 	});
 
 	SettingsController.add('EDIT_WORD', function (state, action) {
 
 	  state.page.settings = Object.assign({}, state.page.settings, {
-	    'wordModal': {
+	    'wordEditModal': {
 	      active: true,
 	      word: action.word
 	    }
 	  });
 
-	  return state;
+	  return this.saveState(state);
+	});
+
+	SettingsController.add('CLOSE_WORD_MODALS', function (state, action) {
+
+	  state.page.settings = Object.assign({}, state.page.settings, {
+	    'wordAddModal': { active: false },
+	    'wordEditModal': { active: false }
+	  });
+
+	  return this.saveState(state);
 	});
 
 	SettingsController.add('TOGGLE_WORD', function (state, action) {
 
 	  var idx = _.findIndex(state.words, { 'id': action.word.id });
 
-	  state.words = replaceInArray(idx, state.words, { active: false });
+	  state.words = replaceInArray(idx, state.words, { active: action.toggle });
 
 	  return this.saveState(state);
 	});
@@ -26121,6 +26113,7 @@
 
 	function replaceInArray(idx, arr, object) {
 	  var obj = Object.assign({}, arr[idx], object);
+	  console.log(obj);
 
 	  return [].concat(_toConsumableArray(arr.slice(0, idx)), [obj], _toConsumableArray(arr.slice(idx + 1)));
 	}
@@ -27030,8 +27023,8 @@
 	currAlignment='left';} // Vertical bottom offscreen detection
 	if(offsetTop+activates.innerHeight()>windowHeight){ // If going upwards still goes offscreen, just crop height of dropdown.
 	if(offsetTop+originHeight-activates.innerHeight()<0){var adjustedHeight=windowHeight-offsetTop-verticalOffset;activates.css('max-height',adjustedHeight);}else { // Flow upwards.
-	if(!verticalOffset){verticalOffset+=originHeight;}verticalOffset-=activates.innerHeight();}} // Handle edge alignment
-	if(currAlignment==='left'){gutterSpacing=options.gutter;leftPosition=origin.position().left+gutterSpacing;}else if(currAlignment==='right'){var offsetRight=origin.position().left+origin.outerWidth()-activates.outerWidth();gutterSpacing=-options.gutter;leftPosition=offsetRight+gutterSpacing;} // Position dropdown
+	if(!verticalOffset){verticalOffset+=originHeight;}verticalOffset-=activates.innerHeight();}}var leftPosition=0; // Handle edge alignment
+	if(currAlignment==='left'){gutterSpacing=options.gutter;console.log(options.gutter);leftPosition=origin.position().left+gutterSpacing;}else if(currAlignment==='right'){var offsetRight=origin.position().left+origin.outerWidth()-activates.outerWidth();gutterSpacing=-options.gutter;leftPosition=offsetRight+gutterSpacing;} // Position dropdown
 	activates.css({position:'absolute',top:origin.position().top+verticalOffset,left:leftPosition}); // Show dropdown
 	activates.stop(true,true).css('opacity',0).slideDown({queue:false,duration:options.inDuration,easing:'easeOutCubic',complete:function complete(){$(this).css('height','');}}).animate({opacity:1},{queue:false,duration:options.inDuration,easing:'easeOutSine'});}function hideDropdown(){ // Check for simultaneous focus and click events.
 	isFocused=false;activates.fadeOut(options.outDuration);activates.removeClass('active');origin.removeClass('active');setTimeout(function(){activates.css('max-height','');},options.outDuration);} // Hover
@@ -27338,7 +27331,7 @@
 	if(!$select.is(':disabled')){$newSelect.dropdown({'hover':false,'closeOnClick':false});} // Copy tabindex
 	if($select.attr('tabindex')){$($newSelect[0]).attr('tabindex',$select.attr('tabindex'));}$select.addClass('initialized');$newSelect.on({'focus':function focus(){if($('ul.select-dropdown').not(options[0]).is(':visible')){$('input.select-dropdown').trigger('close');}if(!options.is(':visible')){$(this).trigger('open',['focus']);var label=$(this).val();var selectedOption=options.find('li').filter(function(){return $(this).text().toLowerCase()===label.toLowerCase();})[0];activateOption(options,selectedOption);}},'click':function click(e){e.stopPropagation();}});$newSelect.on('blur',function(){if(!multiple){$(this).trigger('close');}options.find('li.selected').removeClass('selected');});options.hover(function(){optionsHover=true;},function(){optionsHover=false;});$(window).on({'click':function click(){multiple&&(optionsHover||$newSelect.trigger('close'));}}); // Add initial multiple selections.
 	if(multiple){$select.find("option:selected:not(:disabled)").each(function(){var index=$(this).index();toggleEntryFromArray(valuesSelected,index,$select);options.find("li").eq(index).find(":checkbox").prop("checked",true);});} // Make option as selected and scroll to selected position
-	activateOption=function activateOption(collection,newOption){if(newOption){collection.find('li.selected').removeClass('selected');var option=$(newOption);option.addClass('selected');options.scrollTo(option);}}; // Allow user to search by typing
+	var activateOption=function activateOption(collection,newOption){if(newOption){collection.find('li.selected').removeClass('selected');var option=$(newOption);option.addClass('selected');options.scrollTo(option);}}; // Allow user to search by typing
 	// this array is cleared after 1 second
 	var filterQuery=[],onKeyDown=function onKeyDown(e){ // TAB - switch to another input
 	if(e.which==9){$newSelect.trigger('close');return;} // ARROW DOWN WHEN SELECT IS CLOSED - open select options
@@ -28014,7 +28007,7 @@
 	e.preventDefault();e.stopPropagation();return false;}}function release(e){pressed=false;clearInterval(ticker);target=offset;if(velocity>10||velocity<-10){amplitude=0.9*velocity;target=offset+amplitude;}target=Math.round(target/dim)*dim;amplitude=target-offset;timestamp=Date.now();requestAnimationFrame(autoScroll);e.preventDefault();e.stopPropagation();return false;}xform='transform';['webkit','Moz','O','ms'].every(function(prefix){var e=prefix+'Transform';if(typeof document.body.style[e]!=='undefined'){xform=e;return false;}return true;});window.onresize=scroll;setupEvents();scroll(offset);$(this).on('carouselNext',function(e,n){if(n===undefined){n=1;}target=offset+dim*n;if(offset!==target){amplitude=target-offset;timestamp=Date.now();requestAnimationFrame(autoScroll);}});$(this).on('carouselPrev',function(e,n){if(n===undefined){n=1;}target=offset-dim*n;if(offset!==target){amplitude=target-offset;timestamp=Date.now();requestAnimationFrame(autoScroll);}});});},next:function next(n){$(this).trigger('carouselNext',[n]);},prev:function prev(n){$(this).trigger('carouselPrev',[n]);}};$.fn.carousel=function(methodOrOptions){if(methods[methodOrOptions]){return methods[methodOrOptions].apply(this,Array.prototype.slice.call(arguments,1));}else if((typeof methodOrOptions==='undefined'?'undefined':_typeof(methodOrOptions))==='object'||!methodOrOptions){ // Default to "init"
 	return methods.init.apply(this,arguments);}else {$.error('Method '+methodOrOptions+' does not exist on jQuery.carousel');}}; // Plugin end
 	})(jQuery);
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)(module)))
 
 /***/ },
 /* 57 */
@@ -30660,7 +30653,6 @@
 
 	    this.opts.store.subscribe(function () {
 	      this.state = this.opts.store.getState();
-	      console.log(this.state);
 	      this.update();
 	    }.bind(this));
 	}, '{ }');
@@ -30705,7 +30697,7 @@
 
 	var riot = __webpack_require__(1);
 
-	riot.tag2('settings-handler', '<div class="row"> <div class="col s12 l6 push-l3"> <word-list words="{this.state.words}"></word-list> </div> </div> <word-modal state="{this.state.page.settings.wordModal}"></word-modal>', '', '', function(opts) {
+	riot.tag2('settings-handler', '<div class="row"> <div class="col s12 l6 push-l3"> <word-list words="{this.state.words}"></word-list> </div> </div> <word-edit-modal state="{this.state.page.settings.wordEditModal}"></word-edit-modal> <word-add-modal state="{this.state.page.settings.wordAddModal}"></word-add-modal>', '', '', function(opts) {
 	    this.on('update', function() {
 	      this.state = this.opts.state;
 	    });
@@ -30721,28 +30713,36 @@
 
 	var riot = __webpack_require__(1);
 
-	var _ = __webpack_require__(17);
-
 	__webpack_require__(66);
 
-	riot.tag2('word-list', '<div class="input-field"> <input id="search" type="text" onkeyup="{this.search}"> <label for="search">Search</label> </div> <div class="collection"> <word-item each="{this.words}"> </word-item> </div> <a class="add-word-btn btn-floating btn-large waves-effect waves-dark white"> <i class="material-icons default-text">add</i> </a>', '', 'class="word-list"', function(opts) {
+	riot.tag2('word-list', '<div class="input-field"> <input id="search" type="text" onkeyup="{this.search}"> <label for="search">Search</label> </div> <div class="collection"> <word-item each="{this.words}"> </word-item> </div> <a onclick="{add}" class="add-word-btn btn-floating btn-large waves-effect waves-dark white"> <i class="material-icons default-text">add</i> </a>', '', 'class="word-list"', function(opts) {
 
+	    this.mixin('dispatch');
 	    this.cachedWords = [];
+	    this.$search = $('#search');
 
-	    this.on('update', function () {
-	      if( this.cachedWords.length != this.opts.words.length ) {
+	    this.on('update', function ( bool ) {
+
+	      if( this.cachedWords.length != this.opts.words.length || bool ) {
 	        this.words = _.clone(this.opts.words);
 	        this.cachedWords = _.clone(this.opts.words);
 	        this.search();
 	      }
 	    });
 
-	    this.search = _.debounce(function (e) {
-	      var searchValue = e ? e.target.value : $('#search').value;
+	    this.on('mount', function () {
+	      this.$search = $('#search');
+	    });
+
+	    this.add = function () {
+	      this.dispatch({type: 'ADD_WORD'});
+	    }
+
+	    this.search = _.debounce(function () {
+	      var searchValue = this.$search.val();
 
 	      if( _.isString(searchValue) ) {
 	        searchValue = searchValue.toLowerCase();
-
 	        this.words = _.filter(this.opts.words, function (val) {
 	          return (
 	            _.startsWith(val.translation, searchValue) ||
@@ -30752,7 +30752,7 @@
 	        });
 	        this.update();
 	      }
-	    }, 300);
+	    }, 400);
 
 	}, '{ }');
 
@@ -30796,9 +30796,13 @@
 
 	var riot = __webpack_require__(1);
 
-	riot.tag2('word-item', '<i class="material-icons default lighten-1 circle" style="font-weight: bold;">done_all</i> <span class="title">{this.word.word}</span> <span class="type badge hide-on-small-only">{this.word.type}</span> <a href="#!" class="secondary-content waves-effect last waves-default" onclick="{this.toggleActive}"> <i class="{\'grey-text\': (!this.word.active), \'material-icons\': true}">grade</i> </a> <a href="#" class="secondary-content waves-effect waves-default" onclick="{this.edit}"> <i class="material-icons">edit</i> </a>', 'word-item { display: block; } .badge.type { right: 100px !important; } .title { text-transform: uppercase; }', 'class="collection-item avatar"', function(opts) {
+	riot.tag2('word-item', '<i class="material-icons default lighten-1 circle" style="font-weight: bold;">done_all</i> <span class="title">{this.word}</span> <span class="type badge hide-on-small-only">{this.type}</span> <a href="#!" class="secondary-content waves-effect last waves-default" onclick="{this.toggleActive}"> <i class="{\'grey-text\': (!this.active), \'material-icons\': true}">grade</i> </a> <a href="#" class="secondary-content waves-effect waves-default" onclick="{this.edit}"> <i class="material-icons">edit</i> </a>', 'word-item { display: block; } .badge.type { right: 100px !important; } .title { text-transform: uppercase; }', 'class="collection-item avatar"', function(opts) {
 
 	    this.mixin('dispatch');
+
+	    this.on('mount', function () {
+	      this.update();
+	    });
 
 	    this.edit = function () {
 	      this.dispatch({type: 'EDIT_WORD', word: this._item});
@@ -30806,14 +30810,11 @@
 	    }
 
 	    this.toggleActive = function () {
-	      this.dispatch({type: 'TOGGLE_WORD', word: this._item});
+	      this.dispatch({type: 'TOGGLE_WORD', word: this._item, toggle: !this._item.active});
+	      this.parent.trigger('update', true);
 	    }
 
-	    this.word = this._item;
-
 	    this.on('update', function () {
-	      console.log(this);
-	      this.word = this._item;
 	    });
 
 	}, '{ }');
@@ -30825,21 +30826,75 @@
 
 	var riot = __webpack_require__(1);
 
-	__webpack_require__(76);
+	__webpack_require__(70);
+	riot.tag2('word-add-modal', '<div class="modal-content default white-text"> <h4> <strong>Add Word</strong> </h4> </div> <div class=""> <ul class="tabs"> <li class="tab col s4"> <a id="#tab-noun" class="active" href="#" onclick="{this.tab(\'noun\')}">Noun</a> </li> <li class="tab col s4"> <a href="#" id="#tab-adjective" onclick="{this.tab(\'adjective\')}">Adjective</a> </li> <li class="tab col s4"> <a href="#" id="#tab-verb" onclick="{this.tab(\'verb\')}">Verb</a> </li> </ul> </div> <div class="modal-content"> <form class=""> <div class="row"> <div class="input-field input-no-margin col s8"> <input id="search-query" type="text"> <label for="search-query">Search</label> </div> <div class="input-field input-no-margin col s2"> <select id="language-pick"> <option value="romanian">Romanian</option> <option value="english" selected>English</option> </select> </div> <div class="col s2 center-align input-button"> <a class="waves-effect waves-default btn-flat" onclick="{this.search}">Search</a> </div> </div> <div class="" if="{(this.type === \'noun\' && this.word)}"> <div class="row"> <div class="input-field col s12 m6"> <input id="definite" type="text" value="{this.word.indefinite.word}"> <label class="{\'active\': (this.word.indefinite.word)}" for="definite">Word</label> </div> <div class="input-field col s12 m6"> <input id="definite" type="text" value="{this.word.definite.word}"> <label class="{\'active\': (this.word.definite.word)}" for="definite">Definite Article</label> </div> </div> <div class="row"> <div class="input-field col s12 m6"> <input id="plural" type="text" value="{this.word.indefinite.plural}"> <label class="{\'active\': (this.word.indefinite.plural)}" for="plural">Plural</label> </div> <div class="input-field col s12 m6"> <input id="definite_plural" type="text" value="{this.word.definite.plural}"> <label class="{\'active\': (this.word.definite.plural)}" for="definite_plural">Definite Plural</label> </div> </div> <div class="row"> <div class="input-field col s12 m6"> <input id="translation" type="text" value="{this.word.translation}"> <label class="{\'active\': (this.word.translation)}" for="translation">Translation</label> </div> <div class="input-field col s12 m6"> <input id="gender" type="text" value="{this.word.gender}"> <label class="{\'active\': (this.word.gender)}" for="gender">Gender</label> </div> </div> </div> </form> </div> <div class="modal-footer"> <a onclick="{this.close}" href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Abort</a> <a onclick="{this.save}" href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Save</a> </div>', 'word-modal { display: block; } .chip { float: right; margin-left: 5px; }', 'id="word-add-modal" class="modal word-add-modal"', function(opts) {
+	    this.mixin('dispatch');
 
-	riot.tag2('word-modal', '<div class="modal-content default white-text"> <h4> <strong>{this.word.word}</strong> <span class="chip"> {this.word.type} </span> <span class="chip" if="{this.word.gender}"> {this.word.gender} </span> </h4> </div> <div class="modal-content"> <form class=""> <div class="row"> <div class="input-field col s6"> <input id="word" type="text" value="{this.word.word}"> <label class="{\'active\': (this.word.word)}" for="word">Word</label> </div> <div class="input-field col s6"> <input id="translation" type="text" value="{this.word.translation}"> <label class="{\'active\': (this.word.translation)}" for="translation">Translation</label> </div> </div> <div class="" if="{this.word.type === \'noun\'}"> <div class="row"> <div class="input-field col s12 m4"> <input id="definite" type="text" value="{this.word.definite.word}"> <label class="{\'active\': (this.word.definite.word)}" for="definite">Definite Article</label> </div> <div class="input-field col s12 m4"> <input id="plural" type="text" value="{this.word.indefinite.plural}"> <label class="{\'active\': (this.word.indefinite.plural)}" for="plural">Plural</label> </div> <div class="input-field col s12 m4"> <input id="definite_plural" type="text" value="{this.word.definite.plural}"> <label class="{\'active\': (this.word.definite.plural)}" for="definite_plural">Definite Plural</label> </div> </div> </div> </form> </div> <div class="modal-footer"> <a href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Abort</a> <a href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Save</a> </div>', 'word-modal { display: block; } .chip { float: right; margin-left: 5px; }', 'id="word-modal" if="{this.state.active}" class="modal"', function(opts) {
+	    this.open = false;
+	    this.word = { type: 'noun' };
+
 	    this.on('update', function() {
 	      if (!this.opts.state) return false;
 
 	      this.state = this.opts.state;
-	      this.word = this.state.word || {};
-	      console.log(this.state);
+	      this.word = this.state.word || this.word;
+	      console.log(this.word);
 	    });
 
+	    this.on('mount', function() {
+	      this.$modal = $('#word-add-modal');
+	      this.$tabs = $('ul.tabs');
+	      this.$search = $('#search-query');
+	      this.$select = $('#language-pick');
+
+	      this.type = 'noun';
+	    });
+
+	    this.tab = function ( tab, bool ) {
+	      return function ( tab ){
+	        this.type = tab;
+	      }.bind(this, tab)
+	    }
+
+	    this.search = function () {
+	      var query = this.$search.val();
+	      var language = this.$select.val();
+
+	      if( query && language ) {
+	        $.get('/query/' + language + '/' + query, function (res) {
+	          if( res ) {
+	            this.word = res;
+	            this.update();
+	          }
+	        }.bind(this));
+	      }
+	    }
+
+	    this.close = function () {
+	      this.dispatch({type: 'CLOSE_WORD_MODALS'});
+	    }
+
+	    this.save = function () {
+	      this.word.type = this.type;
+	      this.dispatch({type: 'SAVE_WORD', word: this.word});
+	    }
+
 	    this.on('updated', function() {
-	      console.log(this);
-	      if (this.state && this.state.active)
-	        $('#word-modal').openModal();
+	      if (this.state && this.state.active) {
+
+	        if ( !this.open ) {
+	          this.$modal.openModal();
+	          this.$tabs.tabs();
+
+	          this.open = true;
+	        }
+
+	      } else if( this.state ) {
+	        this.$modal.closeModal();
+	        this.open = false;
+	      } else {
+	        this.open = false;
+	      }
 	    });
 	}, '{ }');
 
@@ -30848,9 +30903,91 @@
 /* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(71);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(55)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/sass-loader/index.js!./word-modal.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/sass-loader/index.js!./word-modal.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 71 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(29)();
+	exports.push([module.id, ".modal-content h4 strong {\n  text-transform: uppercase; }\n\n.chip {\n  margin-left: 15px; }\n\n.word-add-modal .input-no-margin {\n  margin-top: 0 !important; }\n\n.word-add-modal .input-button {\n  padding-right: 0 !important; }\n  .word-add-modal .input-button a {\n    margin-top: 7px !important; }\n", ""]);
+
+/***/ },
+/* 72 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var riot = __webpack_require__(1);
+
+	__webpack_require__(70);
+
+	riot.tag2('word-edit-modal', '<div class="modal-content default white-text"> <h4> <strong>{this.word.word}</strong> <span class="chip"> {this.word.type} </span> <span class="chip" if="{this.word.gender}"> {this.word.gender} </span> </h4> </div> <div class="modal-content"> <form class=""> <div class="row"> <div class="input-field col s6"> <input id="word" type="text" value="{this.word.word}"> <label class="{\'active\': (this.word.word)}" for="word">Word</label> </div> <div class="input-field col s6"> <input id="translation" type="text" value="{this.word.translation}"> <label class="{\'active\': (this.word.translation)}" for="translation">Translation</label> </div> </div> <div class="" if="{this.word.type === \'noun\'}"> <div class="row"> <div class="input-field col s12 m4"> <input id="definite" type="text" value="{this.word.definite.word}"> <label class="{\'active\': (this.word.definite.word)}" for="definite">Definite Article</label> </div> <div class="input-field col s12 m4"> <input id="plural" type="text" value="{this.word.indefinite.plural}"> <label class="{\'active\': (this.word.indefinite.plural)}" for="plural">Plural</label> </div> <div class="input-field col s12 m4"> <input id="definite_plural" type="text" value="{this.word.definite.plural}"> <label class="{\'active\': (this.word.definite.plural)}" for="definite_plural">Definite Plural</label> </div> </div> </div> </form> </div> <div class="modal-footer"> <a onclick="{this.close}" href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Abort</a> <a href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Save</a> </div>', 'word-modal { display: block; } .chip { float: right; margin-left: 5px; }', 'id="word-edit-modal" class="modal"', function(opts) {
+	    this.mixin('dispatch');
+
+	    this.open = false;
+
+	    this.on('update', function() {
+	      if (!this.opts.state) return false;
+
+	      this.state = this.opts.state;
+	      this.word = this.state.word || {};
+	      console.log(this.state);
+	    });
+
+	    this.on('mount', function() {
+	      this.$modal = $('#word-edit-modal');
+	    });
+
+	    this.close = function () {
+	      this.dispatch({type: 'CLOSE_WORD_MODALS'});
+	    }
+
+	    this.on('updated', function() {
+	      console.log(this);
+	      if (this.state && this.state.active) {
+	        if ( !this.open ) {
+	          this.$modal.openModal();
+
+	          this.open = true;
+	        }
+	      }  else if( this.state ) {
+	        this.$modal.closeModal();
+	        this.open = false;
+	      } else {
+	        this.open = false;
+	      }
+	    });
+	}, '{ }');
+
+
+/***/ },
+/* 73 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var riot = __webpack_require__(1);
 
 	riot.tag2('game-handler', '<div if="{!this.state.game.error}"> <comparator-mode if="{this.mode(\'comparator\')}" game="{this.state.game}"> </comparator-mode> </div> <div class="error-message" if="{this.state.game.error}">{this.state.game.error}</div>', '', '', function(opts) {
+
+	    this.mixin('dispatch');
 
 	    this.on('update', function() {
 	      this.state = this.opts.state;
@@ -30861,23 +30998,22 @@
 	    }
 
 	    this.checkAnswer = function () {
-	      this.opts.store.dispatch({type: 'CHECK_ANSWER'});
+	      this.dispatch({type: 'CHECK_ANSWER'});
 	    }.bind(this);
 
 	    this.setAnswer = function ( id, answer ) {
-	      this.opts.store.dispatch({type: 'SET_ANSWER', id: id, answer: answer });
+	      this.dispatch({type: 'SET_ANSWER', id: id, answer: answer });
 	    }.bind(this);
 
 	}, '{ }');
 
 
 /***/ },
-/* 71 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var riot = __webpack_require__(1);
 
-	var _ = __webpack_require__(17);
 	var $ = __webpack_require__(3);
 
 	riot.tag2('comparator-mode', '<word type="main" data="{this.word}"></word> <comparator each="{this.opts.game.mode.comparators}" data="{this}"></comparator> <span class="main-button" onclick="{this.checkAnswer}">Skip</span>', '', '', function(opts) {
@@ -30900,12 +31036,12 @@
 
 
 /***/ },
-/* 72 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var riot = __webpack_require__(1);
 
-	__webpack_require__(73);
+	__webpack_require__(76);
 
 	riot.tag2('comparator', '<div> <input type="game" name="name" value="{this.answer}" autocomplete="off" placeholder="{this.name}" onchange="{this.setAnswer}"> <label if="{this.correct === true}">T</label> <label if="{this.correct === false}">F</label> </div>', '', 'class="comparator" if="{this.active}"', function(opts) {
 
@@ -30916,49 +31052,6 @@
 
 	    this.on('update', function () {
 	    });
-	}, '{ }');
-
-
-/***/ },
-/* 73 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(74);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(55)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/sass-loader/index.js!./comparator.scss", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/sass-loader/index.js!./comparator.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 74 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(29)();
-	exports.push([module.id, ".comparator input {\n  display: inline-block;\n  margin: 0.33em auto;\n  padding: 10px 20px;\n  box-sizing: border-box;\n  border: 0;\n  outline: 0;\n  font-size: 0.35em;\n  color: #222; }\n  @media only screen and (max-width: 529px) {\n    .comparator input {\n      font-size: 0.38em; } }\n  @media only screen and (min-width: 1950px) {\n    .comparator input {\n      font-size: 0.35em; } }\n", ""]);
-
-/***/ },
-/* 75 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var riot = __webpack_require__(1);
-
-	riot.tag2('word', '<h2>{this.opts.data.word}</h2> <div class="info"> <span>{this.opts.data.translation}</span> <span>{this.opts.data.number}</span> <span>{this.opts.data.gender}</span> </div>', '', 'class="word"', function(opts) {
 	}, '{ }');
 
 
@@ -30978,8 +31071,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/sass-loader/index.js!./word-modal.scss", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/sass-loader/index.js!./word-modal.scss");
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/sass-loader/index.js!./comparator.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/sass-loader/index.js!./comparator.scss");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -30993,7 +31086,17 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(29)();
-	exports.push([module.id, ".modal-content h4 strong {\n  text-transform: uppercase; }\n\n.chip {\n  margin-left: 15px; }\n", ""]);
+	exports.push([module.id, ".comparator input {\n  display: inline-block;\n  margin: 0.33em auto;\n  padding: 10px 20px;\n  box-sizing: border-box;\n  border: 0;\n  outline: 0;\n  font-size: 0.35em;\n  color: #222; }\n  @media only screen and (max-width: 529px) {\n    .comparator input {\n      font-size: 0.38em; } }\n  @media only screen and (min-width: 1950px) {\n    .comparator input {\n      font-size: 0.35em; } }\n", ""]);
+
+/***/ },
+/* 78 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var riot = __webpack_require__(1);
+
+	riot.tag2('word', '<h2>{this.opts.data.word}</h2> <div class="info"> <span>{this.opts.data.translation}</span> <span>{this.opts.data.number}</span> <span>{this.opts.data.gender}</span> </div>', '', 'class="word"', function(opts) {
+	}, '{ }');
+
 
 /***/ }
 /******/ ]);

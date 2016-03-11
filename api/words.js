@@ -22,7 +22,7 @@ String.prototype.latinise=function(){return this.replace(/[^A-Za-z0-9\[\] ]/g,fu
 String.prototype.latinize=String.prototype.latinise;
 String.prototype.isLatin=function(){return this==this.latinise()}
 
-exports.queryRom = function(req, res) {
+exports.queryEng = function(req, res) {
   request("http://www.dict.com/Englez-roman/" + encodeURIComponent(req.params.query) + "?", function(error, response, html){
     if(!error){
         // Next, we'll utilize the cheerio library on the returned html which will essentially give us jQuery functionality
@@ -66,7 +66,7 @@ exports.queryRom = function(req, res) {
             var dWord = definite.find('font').eq(4).text().split(" ")[1];
             var dPlural = definite.find('font').eq(19).text().split(" ")[1];
 
-             res.json({word: iWord, indefinite: { word: iWord, plural: iPlural }, definite: { word: dWord, plural: dPlural }, eng:req.params.query, gender: gender });
+             res.json({word: iWord, indefinite: { word: iWord, plural: iPlural }, definite: { word: dWord, plural: dPlural }, translation:req.params.query, gender: gender });
 
             console.log($('table').first().children('tr'));
           });
@@ -79,7 +79,7 @@ exports.queryRom = function(req, res) {
   });
 };
 
-exports.queryEng = function(req, res) {
+exports.queryRom = function(req, res) {
 
     var word = String(req.params.query).latinize();
 
@@ -120,7 +120,7 @@ exports.queryEng = function(req, res) {
 
             var eng = getLastWord(String($('.entry').find('tr').eq(1).find('span.lex_ful_tran').first().text() ).latinize());
 
-            res.json({word: iWord, indefinite: { word: iWord, plural: iPlural }, definite: { word: dWord, plural: dPlural }, eng:eng, gender: gender });
+            res.json({word: iWord, indefinite: { word: iWord, plural: iPlural }, definite: { word: dWord, plural: dPlural }, translation:eng, gender: gender });
           }
         });
 

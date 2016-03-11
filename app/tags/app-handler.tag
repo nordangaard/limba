@@ -47,7 +47,6 @@ var $ = require('jquery');
 
     this.opts.store.subscribe(function () {
       this.state = this.opts.store.getState();
-      console.log(this.state);
       this.update();
     }.bind(this));
   </script>

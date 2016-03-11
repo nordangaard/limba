@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const ls = require('local-storage');
 
 class Controller {

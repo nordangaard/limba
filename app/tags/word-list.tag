@@ -1,5 +1,3 @@
-var _ = require('lodash');
-
 require('../styles/tags/word-list');
 
 <word-list class="word-list">
@@ -12,28 +10,48 @@ require('../styles/tags/word-list');
     </word-item>
   </div>
 
-  <a class="add-word-btn btn-floating btn-large waves-effect waves-dark white">
+  <a  onclick="{add}"
+    class="add-word-btn btn-floating btn-large waves-effect waves-dark white">
     <i class="material-icons default-text">add</i>
   </a>
 
   <script>
 
+    this.mixin('dispatch');
     this.cachedWords = [];
+    this.$search = $('#search');
 
-    this.on('update', function () {
-      if( this.cachedWords.length != this.opts.words.length ) {
+    this.on('update', function ( bool ) {
+
+      if( this.cachedWords.length != this.opts.words.length || bool ) {
         this.words = _.clone(this.opts.words);
         this.cachedWords = _.clone(this.opts.words);
         this.search();
       }
     });
 
-    this.search = _.debounce(function (e) {
-      var searchValue = e ? e.target.value : $('#search').value;
+    this.on('mount', function () {
+      this.$search = $('#search');
+    });
+
+    // this.on('forceUpdate', function () {
+    //   console.log('force');
+    //   this.words = _.clone(this.opts.words);
+    //   this.cachedWords = _.clone(this.opts.words);
+    //   this.search();
+    //
+    //   this.update();
+    // });
+
+    this.add = function () {
+      this.dispatch({type: 'ADD_WORD'});
+    }
+
+    this.search = _.debounce(function () {
+      var searchValue = this.$search.val();
 
       if( _.isString(searchValue) ) {
         searchValue = searchValue.toLowerCase();
-
         this.words = _.filter(this.opts.words, function (val) {
           return (
             _.startsWith(val.translation, searchValue) ||
@@ -43,7 +61,7 @@ require('../styles/tags/word-list');
         });
         this.update();
       }
-    }, 300);
+    }, 400);
 
   </script>
 </word-list>

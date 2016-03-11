@@ -5,7 +5,8 @@
     </div>
   </div>
 
-  <word-modal state="{this.state.page.settings.wordModal}"></word-modal>
+  <word-edit-modal state="{this.state.page.settings.wordEditModal}"></word-edit-modal>
+  <word-add-modal state="{this.state.page.settings.wordAddModal}"></word-add-modal>
 
   <script>
     this.on('update', function() {

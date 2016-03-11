@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const Controller = require('./controller');
 const initState = require('../static/initstate');
 const gameModes = require('../static/game-modes');
@@ -11,23 +10,30 @@ GameController.add('INITIALIZE', function (state, action) {
 
   if (savedState) {
     state = savedState;
+
   } else {
     state = initState;
     state.gameModes = gameModes;
     state.page = { active: 'game' };
-
-    state = this.dispatch(state, {type: 'START_GAME'});
   }
+
+
+  if( state.page.active === 'game')
+    state = this.dispatch(state, {type: 'START_GAME'});
 
   return state;
 });
 
 GameController.add('START_GAME', function (state, action) {
 
+  if(state.game.error)
+    state.game.error = null;
+
   const mode = filterAndPick( state.gameModes, { 'active': true } );
   if (mode) {
     const activeWords = _.filter(state.words, { 'active': true });
     const words = [];
+
 
     _.forEach(mode.picks, (val) => {
       const pick = filterAndPick( activeWords, val );
@@ -40,11 +46,11 @@ GameController.add('START_GAME', function (state, action) {
     if ( words.length > 0) {
 
       state.game = Object.assign({}, state.game, {
-        words: words,
-        mode: mode
+        words: _.clone(words),
+        mode: _.clone(mode)
       });
 
-      return this.saveState(state);
+      return state;
     }
   }
 
@@ -61,7 +67,6 @@ GameController.add('SET_ANSWER', function (state, action) {
       { answer: action.answer }
   );
 
-  saveGameState( state );
   return state;
 });
 

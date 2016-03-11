@@ -9,6 +9,8 @@
 
   <script>
 
+    this.mixin('dispatch');
+
     this.on('update', function() {
       this.state = this.opts.state;
     });
@@ -18,11 +20,11 @@
     }
 
     this.checkAnswer = function () {
-      this.opts.store.dispatch({type: 'CHECK_ANSWER'});
+      this.dispatch({type: 'CHECK_ANSWER'});
     }.bind(this);
 
     this.setAnswer = function ( id, answer ) {
-      this.opts.store.dispatch({type: 'SET_ANSWER', id: id, answer: answer });
+      this.dispatch({type: 'SET_ANSWER', id: id, answer: answer });
     }.bind(this);
 
   </script>

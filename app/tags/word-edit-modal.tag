@@ -1,6 +1,6 @@
 require('../styles/tags/word-modal');
 
-<word-modal id="word-modal" if="{this.state.active}" class="modal">
+<word-edit-modal id="word-edit-modal" class="modal">
 
   <div class="modal-content default white-text">
     <h4>
@@ -51,7 +51,7 @@ require('../styles/tags/word-modal');
     </form>
   </div>
   <div class="modal-footer">
-    <a href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Abort</a>
+    <a onclick="{this.close}" href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Abort</a>
     <a href="#!" class=" modal-action modal-close waves-effect waves-default btn-flat">Save</a>
   </div>
 
@@ -67,6 +67,10 @@ require('../styles/tags/word-modal');
   </style>
 
   <script>
+    this.mixin('dispatch');
+
+    this.open = false;
+
     this.on('update', function() {
       if (!this.opts.state) return false;
 
@@ -75,11 +79,29 @@ require('../styles/tags/word-modal');
       console.log(this.state);
     });
 
+    this.on('mount', function() {
+      this.$modal = $('#word-edit-modal');
+    });
+
+    this.close = function () {
+      this.dispatch({type: 'CLOSE_WORD_MODALS'});
+    }
+
     this.on('updated', function() {
       console.log(this);
-      if (this.state && this.state.active)
-        $('#word-modal').openModal();
+      if (this.state && this.state.active) {
+        if ( !this.open ) {
+          this.$modal.openModal();
+
+          this.open = true;
+        }
+      }  else if( this.state ) {
+        this.$modal.closeModal();
+        this.open = false;
+      } else {
+        this.open = false;
+      }
     });
   </script>
 
-</word-modal>
+</word-edit-modal>
