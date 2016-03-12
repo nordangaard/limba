@@ -31,7 +31,14 @@ GameController.add('START_GAME', function (state, action) {
 
   const mode = filterAndPick( state.gameModes, { 'active': true } );
   if (mode) {
-    const activeWords = _.filter(state.words, { 'active': true });
+    // let activeWords = _.filter(state.words, { 'active': true });
+
+    const time = new Date().getTime();
+    let activeWords = _.filter(state.words, (val) => {
+      if(!val.active) return false;
+      return (!val.nextAnswer || val.nextAnswer < time);
+    });
+
     const words = [];
 
 
@@ -71,7 +78,6 @@ GameController.add('SET_ANSWER', function (state, action) {
 });
 
 GameController.add('CHECK_ANSWER', function (state, action) {
-  console.log('Checking Answer', action);
   state.game.mode.comparators.forEach((val) => {
     console.log(val);
     let id = val.wordId || 1;
@@ -84,6 +90,23 @@ GameController.add('CHECK_ANSWER', function (state, action) {
     }
 
   });
+
+  state = this.dispatch(state, {type: 'CHECK_WIN'});
+
+  return state;
+});
+
+GameController.add('CHECK_WIN', function (state, action) {
+
+  if( _.every(state.game.mode.comparators, {correct: true}) ) {
+    state.game.words.forEach((val) => {
+      val.nextAnswer = nextAnswer(val);
+      state = this.dispatch(state, {type: 'UPDATE_WORD', word: val});
+    });
+
+    state = this.dispatch(state, {type: 'START_GAME'});
+  }
+
   return state;
 });
 
@@ -96,6 +119,10 @@ function filterAndPick( arr, filter ) {
 function checkAnswer(word, answer, selector) {
   console.log( word, answer, _.get(word, selector) === answer );
   return ( _.get(word, selector) === answer );
+}
+
+function nextAnswer(word) {
+  return (new Date().getTime() + 10); // 1800
 }
 
 module.exports = GameController;

@@ -13,7 +13,5 @@
       this.state = this.opts.state;
     });
 
-    console.log(this);
-
   </script>
 </settings-handler>

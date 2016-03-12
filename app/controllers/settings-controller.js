@@ -56,6 +56,18 @@ SettingsController.add('CLOSE_WORD_MODALS', function (state, action) {
   return this.saveState(state);
 });
 
+SettingsController.add('UPDATE_WORD', function (state, action) {
+
+  console.log('update', action.word);
+  var idx = _.findIndex(state.words, {'id': action.word.id});
+
+  state.words = replaceInArray(idx, state.words, action.word);
+
+  state = this.dispatch(state, {type: 'CLOSE_WORD_MODALS'});
+
+  return this.saveState(state);
+});
+
 SettingsController.add('TOGGLE_WORD', function (state, action) {
 
   var idx = _.findIndex(state.words, {'id': action.word.id});

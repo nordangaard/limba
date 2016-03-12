@@ -106,7 +106,6 @@ require('../styles/tags/word-modal');
 
       this.state = this.opts.state;
       this.word = this.state.word || this.word;
-      console.log(this.word);
     });
 
     this.on('mount', function() {

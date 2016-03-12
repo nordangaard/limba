@@ -1,8 +1,14 @@
 const ls = require('local-storage');
 
-class Controller {
+class SuperController {
   constructor() {
     this.methods = {};
+  }
+}
+
+class Controller extends SuperController {
+  constructor() {
+    super();
   }
 
   saveState( state ) {
@@ -35,6 +41,7 @@ class Controller {
   }
 
   reducer( state, action ) {
+    console.log(this.methods);
     return this.methods[action.type].apply(this, [state, action]);
   }
 
