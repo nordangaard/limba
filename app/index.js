@@ -24,9 +24,18 @@ riot.mixin('dispatch', {
   }
 });
 
+riot.mixin('checkAnswer', {
+  'check': function (word, answer, selector) {
+    console.log(word, answer, selector);
+    console.log(_.get(word, selector), answer.toLowerCase());
+    return ( _.get(word, selector) === answer.toLowerCase() )
+  }
+});
+
 require('./tags/app-handler.tag');
 
 require('./tags/settings-handler.tag');
+require('./tags/input-tag.tag');
 require('./tags/word-list.tag');
 require('./tags/word-item.tag');
 require('./tags/word-add-modal.tag');
@@ -35,7 +44,6 @@ require('./tags/word-edit-modal.tag');
 require('./tags/game-handler.tag');
 require('./tags/comparator-mode.tag');
 require('./tags/comparator.tag');
-
 
 require('./tags/word.tag');
 
@@ -49,6 +57,10 @@ reducer.store.subscribe(() => {
 
 window.dis = function dis(word) {
   reducer.store.dispatch({type: 'START_GAME'});
+}
+
+window.backup = function () {
+  reducer.store.dispatch({type: 'BACKUP'});
 }
 
 document.addEventListener('DOMContentLoaded', function () {

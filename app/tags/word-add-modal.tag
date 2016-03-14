@@ -39,36 +39,36 @@ require('../styles/tags/word-modal');
 
       </div>
 
-      <div class="" if="{(this.type === 'noun' && this.word)}">
+      <div class="" show="{(this.type === 'noun' && this.word)}">
         <div class="row">
           <div class="input-field col s12 m6">
-            <input id="definite" type="text" value="{this.word.indefinite.word}">
-            <label class={'active': (this.word.indefinite.word)} for="definite">Word</label>
+            <input id="indefinite" type="text" value="{this.word.word}" data-bind="word.word">
+            <label class={'active': (this.word.word)} for="indefinite">Word</label>
           </div>
           <div class="input-field col s12 m6">
-            <input id="definite" type="text" value="{this.word.definite.word}">
+            <input id="definite" type="text" value="{this.word.definite.word}" data-bind="definite.word">
             <label class={'active': (this.word.definite.word)} for="definite">Definite Article</label>
           </div>
         </div>
 
         <div class="row">
           <div class="input-field col s12 m6">
-            <input id="plural" type="text" value="{this.word.indefinite.plural}">
+            <input id="plural" type="text" value="{this.word.indefinite.plural}" data-bind="indefinite.plural">
             <label class={'active': (this.word.indefinite.plural)} for="plural">Plural</label>
           </div>
           <div class="input-field col s12 m6">
-            <input id="definite_plural" type="text" value="{this.word.definite.plural}">
+            <input id="definite_plural" type="text" value="{this.word.definite.plural}" data-bind="definite.plural">
             <label class={'active': (this.word.definite.plural)} for="definite_plural">Definite Plural</label>
           </div>
         </div>
 
         <div class="row">
           <div class="input-field col s12 m6">
-            <input id="translation" type="text" value="{this.word.translation}">
+            <input id="translation" type="text" value="{this.word.translation}" data-bind="translation">
             <label class={'active': (this.word.translation)} for="translation">Translation</label>
           </div>
           <div class="input-field col s12 m6">
-            <input id="gender" type="text" value="{this.word.gender}">
+            <input id="gender" type="text" value="{this.word.gender}" data-bind="gender">
             <label class={'active': (this.word.gender)} for="gender">Gender</label>
           </div>
         </div>
@@ -113,6 +113,7 @@ require('../styles/tags/word-modal');
       this.$tabs = $('ul.tabs');
       this.$search = $('#search-query');
       this.$select = $('#language-pick');
+      this.$inputs = $('#word-add-modal input');
 
       this.type = 'noun';
     });
@@ -152,6 +153,18 @@ require('../styles/tags/word-modal');
         if ( !this.open ) {
           this.$modal.openModal();
           this.$tabs.tabs();
+          var self = this;
+
+          this.$inputs.on('keyup', function () {
+            var $this = $(this);
+            var bind = $this.data('bind');
+            var value = $this.val();
+
+            if( bind && value ) {
+              self.word = _.set(self.word, bind, value);
+            }
+
+          });
 
           this.open = true;
         }

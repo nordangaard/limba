@@ -10,7 +10,7 @@ GameController.add('INITIALIZE', function (state, action) {
 
   if (savedState) {
     state = savedState;
-
+    state.gameModes = Object.assign({}, gameModes, state.gameModes);
   } else {
     state = initState;
     state.gameModes = gameModes;
@@ -26,26 +26,23 @@ GameController.add('INITIALIZE', function (state, action) {
 
 GameController.add('START_GAME', function (state, action) {
 
-  if(state.game.error)
-    state.game.error = null;
+  state.game = {};
 
-  const mode = filterAndPick( state.gameModes, { 'active': true } );
+  const mode = _.cloneDeep( filterAndPick( state.gameModes, { 'active': true } ) );
   if (mode) {
     // let activeWords = _.filter(state.words, { 'active': true });
 
     const time = new Date().getTime();
-    let activeWords = _.filter(state.words, (val) => {
+    let activeWords = _.cloneDeep( _.filter(state.words, (val) => {
       if(!val.active) return false;
       return (!val.nextAnswer || val.nextAnswer < time);
-    });
+    }) );
 
     const words = [];
-
 
     _.forEach(mode.picks, (val) => {
       const pick = filterAndPick( activeWords, val );
       if( pick ) {
-        pick.id = words.length + 1;
         words.push( pick );
       }
     });
@@ -53,8 +50,8 @@ GameController.add('START_GAME', function (state, action) {
     if ( words.length > 0) {
 
       state.game = Object.assign({}, state.game, {
-        words: _.clone(words),
-        mode: _.clone(mode)
+        words: words,
+        mode: mode
       });
 
       return state;
@@ -68,7 +65,7 @@ GameController.add('START_GAME', function (state, action) {
 });
 
 GameController.add('SET_ANSWER', function (state, action) {
-  const idx = action.id;
+  const idx = action.idx;
   state.game.mode.comparators[idx] = Object.assign({},
       state.game.mode.comparators[idx],
       { answer: action.answer }
@@ -77,37 +74,27 @@ GameController.add('SET_ANSWER', function (state, action) {
   return state;
 });
 
-GameController.add('CHECK_ANSWER', function (state, action) {
-  state.game.mode.comparators.forEach((val) => {
-    console.log(val);
-    let id = val.wordId || 1;
+GameController.add('SET_WORD_LEARNING', function (state, action) {
 
-    if ( val.active && val.answer.length ) {
-      val.correct = checkAnswer( _.find(state.game.words, {id: id}),
-          val.answer, val.selector);
-    } else {
-      val.correct = null;
-    }
+  var idx = _.findIndex(state.words, {'id': action.word.id});
 
-  });
+  state.words = this.replaceInArray(idx, state.words, action.word);
 
-  state = this.dispatch(state, {type: 'CHECK_WIN'});
-
-  return state;
+  return this.saveState(state);
 });
 
 GameController.add('CHECK_WIN', function (state, action) {
 
-  if( _.every(state.game.mode.comparators, {correct: true}) ) {
+  if( _.every(action.comparators, {correct: true}) ) {
     state.game.words.forEach((val) => {
       val.nextAnswer = nextAnswer(val);
-      state = this.dispatch(state, {type: 'UPDATE_WORD', word: val});
+      state = this.dispatch(state, {type: 'SET_WORD_LEARNING', word: val});
     });
 
     state = this.dispatch(state, {type: 'START_GAME'});
   }
 
-  return state;
+  return this.saveState(state);
 });
 
 function filterAndPick( arr, filter ) {
@@ -116,13 +103,8 @@ function filterAndPick( arr, filter ) {
   return item;
 }
 
-function checkAnswer(word, answer, selector) {
-  console.log( word, answer, _.get(word, selector) === answer );
-  return ( _.get(word, selector) === answer );
-}
-
 function nextAnswer(word) {
-  return (new Date().getTime() + 10); // 1800
+  return (new Date().getTime() + 1800000); //
 }
 
 module.exports = GameController;

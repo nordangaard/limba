@@ -19,13 +19,5 @@
       return ( this.state.game.mode.type === mode )
     }
 
-    this.checkAnswer = function () {
-      this.dispatch({type: 'CHECK_ANSWER'});
-    }.bind(this);
-
-    this.setAnswer = function ( id, answer ) {
-      this.dispatch({type: 'SET_ANSWER', id: id, answer: answer });
-    }.bind(this);
-
   </script>
 </game-handler>

@@ -61,7 +61,7 @@ SettingsController.add('UPDATE_WORD', function (state, action) {
   console.log('update', action.word);
   var idx = _.findIndex(state.words, {'id': action.word.id});
 
-  state.words = replaceInArray(idx, state.words, action.word);
+  state.words = this.replaceInArray(idx, state.words, action.word);
 
   state = this.dispatch(state, {type: 'CLOSE_WORD_MODALS'});
 
@@ -72,7 +72,7 @@ SettingsController.add('TOGGLE_WORD', function (state, action) {
 
   var idx = _.findIndex(state.words, {'id': action.word.id});
 
-  state.words = replaceInArray(idx, state.words, { active: action.toggle });
+  state.words = this.replaceInArray(idx, state.words, { active: action.toggle });
 
   return this.saveState(state);
 });
@@ -90,15 +90,17 @@ SettingsController.add('SWITCH_PAGE', function (state, action) {
   return this.saveState(state);
 });
 
-function replaceInArray(idx, arr, object){
-  var obj = Object.assign({}, arr[idx], object);
-  console.log(obj);
+SettingsController.add('BACKUP', function (state, action) {
 
-  return [
-    ...arr.slice(0, idx),
-    obj,
-    ...arr.slice(idx + 1)
-  ];
-}
+  $.post('/backup', {data: JSON.stringify(this.getSavedState())} );
+
+  return state;
+});
+
+SettingsController.add('RESTORE', function (state, action) {
+
+  return this.saveState(action.state);
+});
+
 
 module.exports = SettingsController;

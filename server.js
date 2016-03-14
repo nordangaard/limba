@@ -16,6 +16,8 @@ var fixPath = function (pathString) {
     return path.resolve(path.normalize(pathString));
 };
 
+var backup = null;
+
 
 // -----------------
 // Configure express
@@ -37,6 +39,20 @@ app.set('views', fixPath('templates'));
 
 app.get('/query/english/:query', api.queryEng);
 app.get('/query/romanian/:query', api.queryRom);
+
+app.post('/backup', function (req, res) {
+  backup = JSON.parse(req.body.data);
+});
+
+app.get('/backup', function (req, res) {
+  if( backup ) {
+    res.status(200);
+  } else {
+    res.status(404);
+  }
+
+  res.json(backup || {});
+});
 
 app.get('*', function (req, res) {
   res.render("index");

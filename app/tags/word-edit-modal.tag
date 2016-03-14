@@ -22,12 +22,12 @@ require('../styles/tags/word-modal');
           <label class={'active': (this.word.word)} for="word">Word</label>
         </div>
         <div class="input-field col s6">
-          <input id="translation" type="text" value="{this.word.translation}" data-bind="definite.translation">
+          <input id="translation" type="text" value="{this.word.translation}" data-bind="translation">
           <label class={'active': (this.word.translation)} for="translation">Translation</label>
         </div>
       </div>
 
-      <div class="" if="{this.word.type === 'noun'}">
+      <div class="" show="{this.word.type === 'noun'}">
         <div class="row">
           <div class="input-field col s12 m4">
             <input id="definite" type="text" value="{this.word.definite.word}" data-bind="definite.word">
@@ -98,13 +98,13 @@ require('../styles/tags/word-modal');
 
           this.$modal.openModal();
 
-          this.$inputs.on('change', function () {
+          this.$inputs.on('keyup', function () {
             var $this = $(this);
             var bind = $this.data('bind');
             var value = $this.val();
 
             if( bind && value ) {
-              self.word = Object.assign({}, self.word, _.set(self.word, bind, value));
+              self.word = _.set(self.word, bind, value);
               console.log(self.word);
             }
 

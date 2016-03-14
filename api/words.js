@@ -50,7 +50,7 @@ exports.queryEng = function(req, res) {
 
             console.log(utf8String);
 
-            var $ = cheerio.load(utf8String.replace("ş", "ș").replace("Ş", "Ș").replace("<!-- Start text --!>", ""));
+            var $ = cheerio.load(utf8String.replace("ş", "ș").replace("Ş", "Ș").replace("ţ", "ț").replace("Ţ", "Ț").replace("<!-- Start text --!>", ""));
 
             var base = $('table').eq(8).find('td').first().find('tr');
             console.log(base);
@@ -98,7 +98,7 @@ exports.queryRom = function(req, res) {
         var utf8String = buf.toString('utf-8');
 
 
-        var $ = cheerio.load(utf8String.replace("ş", "ș").replace("Ş", "Ș").replace("<!-- Start text --!>", ""));
+        var $ = cheerio.load(utf8String.replace("ş", "ș").replace("Ş", "Ș").replace("ţ", "ț").replace("Ţ", "Ț").replace("<!-- Start text --!>", ""));
 
         var base = $('table').eq(8).find('td').first().find('tr');
 

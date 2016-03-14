@@ -1,5 +1,5 @@
 <word-item class="collection-item avatar">
-    <i class="material-icons default lighten-1 circle" style="font-weight: bold;">done_all</i>
+    <i class="material-icons default lighten-1 circle" style="font-weight: bold;">{this.progress()}</i>
     <span class="title">{this.word}</span>
 
     <span class="type badge hide-on-small-only">{this.type}</span>
@@ -17,6 +17,10 @@
     this.on('mount', function () {
       this.update();
     });
+
+    this.progress = function () {
+      return this._item.nextAnswer && this._item.nextAnswer > new Date().getTime() ? 'done_all' : 'done';
+    }
 
     this.edit = function () {
       this.dispatch({type: 'EDIT_WORD', word: this._item});
