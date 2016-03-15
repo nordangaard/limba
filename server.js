@@ -9,7 +9,7 @@ var serveStatic = require('serve-static');
 var app = express();
 var api = require('./api/words');
 
-var HTTP_PORT = 3000;
+var HTTP_PORT = 80;
 
 // a little helper for fixing paths for various environments
 var fixPath = function (pathString) {
