@@ -33,7 +33,7 @@
       host : "limba.zerum.se",
       ref  : "origin/dev",
       repo : "https://nordangaard%40:Ap3ls1n@github.com/nordangaard/limba.git",
-      path : "/var/www/production",
+      path : "/app",
       "post-deploy" : "pm2 startOrRestart ecosystem.json --env production"
     },
     // dev : {
