@@ -30,7 +30,12 @@
   deploy : {
     production : {
       user : "node",
-      host : "limba.zerum.se",
+      hosts : [
+        {
+          host: "limba.zerum.se",
+          port: "58020"
+        }
+      ],
       ref  : "origin/dev",
       repo : "https://nordangaard%40:Ap3ls1n@github.com/nordangaard/limba.git",
       path : "/app",
