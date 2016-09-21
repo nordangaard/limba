@@ -1,0 +1,20 @@
+.modal-content h4 strong {
+  text-transform: uppercase;
+}
+
+.chip {
+  margin-left: 15px;
+}
+
+.word-add-modal {
+  .input-no-margin {
+    margin-top: 0 !important;
+  }
+
+  .input-button {
+    padding-right: 0 !important;
+    a {
+      margin-top: 7px !important;
+    }
+  }
+}

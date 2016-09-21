@@ -1,0 +1,59 @@
+@import '../_variables';
+
+.comparator {
+  input {
+    display: inline-block;
+    margin: 0.45em auto;
+    padding: 10px 20px;
+    box-sizing: border-box;
+
+    border: 0;
+    border-right: solid 15px #FFF;
+
+    outline: 0;
+
+    font-size: 0.40em;
+
+    @media #{$mobile} {
+      font-size: 0.38em;
+    }
+
+    @media #{$desktop-xxxl} {
+      font-size: 0.38em;
+      //font-size: 3vw;
+    }
+
+    &.correct {
+      border-right-color: green;
+    }
+
+    &.incorrect {
+      border-right-color: red;
+    }
+
+    color: #222;
+  }
+
+  .input-container {
+    position: relative;
+    display: inline-block;;
+  }
+
+  .helper {
+
+    position: absolute;
+    top: -5px;
+    right: 0;
+
+    opacity: 0;
+
+    font-size: 24px;
+    color: #FFF;
+
+    cursor: pointer;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}

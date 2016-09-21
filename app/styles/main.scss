@@ -1,0 +1,102 @@
+// out: ../public/css/main.css, sourcemap: true, compress: true
+
+@import '_variables';
+@import '_reset';
+
+@import 'themes/default-theme';
+
+// MAIN
+
+// General rules
+//
+
+[riot-tag] {
+  display: block;
+}
+
+html,
+body,
+main,
+app-handler,
+.page {
+  min-height: 100%;
+}
+
+.page,
+app-handler,
+word-list,
+word-item,
+comparator-mode,
+comparator {
+  display: block;
+}
+
+game-handler {
+  text-align: center;
+}
+
+.word[type='main'], comparator {
+  @media #{$mobile} {
+    font-size: 14vw;
+  }
+
+  @media #{$tablet} {
+    font-size: 10vh;
+  }
+
+  @media #{$desktop} {
+    font-size: 8vh;
+  }
+
+  @media #{$desktop-xl} {
+    font-size: 8vw;
+  }
+
+  @media #{$desktop-xxl} {
+    font-size: 8vw;
+  }
+
+  @media #{$desktop-xxxl} {
+    font-size: 5vw;
+  }
+}
+
+.app-container {
+  min-height: 100% !important;
+  width: 100%;
+  overflow: auto;
+
+  font-size: 18px;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+li {
+  padding: 0;
+}
+
+input {
+  outline: none;
+  border: none;
+  background-color: #FFF;
+}
+
+.main-button {
+  color: #999;
+  padding: 8px 15px;
+}
+
+.error-message {
+  color: #FFF;
+  font-weight: bold;
+  margin: auto 0;
+}
+
+// Tags
+
+@import 'tags/word';
+@import 'tags/comparator';
