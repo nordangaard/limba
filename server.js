@@ -37,8 +37,8 @@ app.use(helmet.nosniff());
 app.set('view engine', 'jade');
 app.set('views', fixPath('templates'));
 
-app.get('/query/english/:query', api.queryEng);
-app.get('/query/romanian/:query', api.queryRom);
+app.get('/query/english/:query', api.nounRoute);
+app.get('/query/romanian/:query', api.nounRoute);
 
 app.post('/backup', function (req, res) {
   backup = JSON.parse(req.body.data);
